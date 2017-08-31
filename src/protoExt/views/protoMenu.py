@@ -51,7 +51,7 @@ def protoGetMenuData(request):
 
         appCode = model._meta.app_label
         
-        # Define la rama del menu 
+        # menu branch  
         try:
             menuLabel = model.protoExt["menuApp"]
         except:
@@ -60,7 +60,7 @@ def protoGetMenuData(request):
         if menuLabel in ['contenttypes', 'sites']:
             menuLabel = 'auth' 
         
-        # Verifica q el usuairo tenga permiso, considera el admin 
+        # Permissions  
         if not getModelPermission(currentUser, model, 'menu') :
             return  
         
@@ -103,10 +103,12 @@ def protoGetMenuData(request):
 
     def getAutoMenu():    
 
-
-        for model in get_models(include_auto_created=True):
+        # Get from admin 
         # for model, model_admin in site._registry.items():
             # protoAdmin = getattr(model_admin, 'protoExt', {})
+
+        # Get from models 
+        for model in get_models(include_auto_created=True):
             menuNode = model._meta.object_name
             protoAdmin = getattr(model, 'protoExt', {}) 
             getMenuItem(protoAdmin, model, menuNode)
@@ -120,22 +122,34 @@ def protoGetMenuData(request):
             app['children'].sort(key=lambda x: x['index'])
 
 
-        #=====  Carga las diferentes opciones posibles en el menu
-        
+        # Automenu - Apps          
+        prNodes = {  
+            'text': 'Apps' ,
+            'expanded': False ,
+            'index': 1,
+            'children': app_list,
+            'leaf': False 
+        }
+        app_list = [ prNodes ]
+
+
+        # Auto Menu - ProtoViews  
         getAutoMenuViews( app_list, currentUser)
 
+        # Auto Menu - Prototypes   
         if isInstalledApp( 'prototype' ):  
             getAutoMenuProto( app_list, userProfile)
 
-
-        # Pega el menu sobre la definicion anterior  
         try: 
             menuAux = []
             menuTmp = verifyList(protoDef.metaDefinition)
+
+            # Copy all but automenu,   
             for menuOp in menuTmp:
                 if menuOp.get( 'text', '') != 'AutoMenu':
                     menuAux.append (menuOp) 
 
+            # Add automenu,   
             menuAux.append({
                     'id': 'prototype.auto.nodes' ,
                     'text': 'AutoMenu' ,
@@ -148,7 +162,7 @@ def protoGetMenuData(request):
             menuAux = app_list 
 
 
-        # Lo guarda  ( created : true  --> new
+        # Save in customDef  created : true  --> new
         protoDef.metaDefinition = menuAux  
         protoDef.active = True  
         protoDef.description = 'Menu' 
@@ -159,14 +173,11 @@ def protoGetMenuData(request):
 
 
 #--------------------------------------------------------------------------------- 
-#-- Lectura de la Db ------------------------------------------------------------- 
-#-- Lectura de la Db ------------------------------------------------------------- 
-#--------------------------------------------------------------------------------- 
+#-- Db ------------------------------------------------------------- 
 #--------------------------------------------------------------------------------- 
 
 
-
-    # Indica si debe recargar el menu 
+    # Flag for menu reload  
     forceDefault = request.POST.get('forceDefault', '') 
 
     viewCode = '__menu'
@@ -233,7 +244,7 @@ def getMenuNode(prNodes, optText):
 
 def getAutoMenuProto( app_list, userProfile ):
     """
-    lee las opciones de base de prototipos
+    Load all prototypes 
     """
 
     try: 
@@ -269,7 +280,7 @@ def getAutoMenuProto( app_list, userProfile ):
 
 def getAutoMenuViews(app_list, currentUser ):
     """
-    Carga las vistas definidas 
+    Load all defined views  
     """
 
     prototypes = ViewDefinition.objects.all()
