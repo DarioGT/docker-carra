@@ -159,7 +159,7 @@ def setFieldProperty(pField, pProperty, pDefault, field, fProperty, fpDefault):
 
 def isAdmField(fName):
 
-    # Framework internals soft smVersion that is a contextual field  
+    # Framework internals soft sm-Version that is a contextual field  
     return  (fName in [ \
         'smOwningUser', 'smCreatedBy', 'smModifiedBy', \
         'smCreatedOn', 'smOwningTeam', 'smModifiedOn', \

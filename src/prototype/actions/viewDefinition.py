@@ -9,16 +9,19 @@ from prototype.models import Entity,  Prototype
 from protoLib.getStuff import getUserProfile
 from protoExt.utils.utilsConvert import slugify2
 from jsonfield2.utils import JSONEncoder
+from protoExt.utils.utilsBase import verifyStr
 
 
 PROTO_PREFIX = "prototype.ProtoTable."
 
 
-def getViewDefinition(pEntity, viewTitle):
+
+def getViewDefinition(pEntity, viewSufx ):
 
     entityName = getViewCode(pEntity)
+    viewName  = getViewCode(pEntity, viewSufx)
 
-    infoEntity = baseDefinition(pEntity, entityName, viewTitle)
+    infoEntity = baseDefinition(pEntity, entityName, viewName)
     infoEntity['gridConfig']['baseFilter'] = [
         {'property': 'entity', 'filterStmt': '=' + str(pEntity.id)}]
 
@@ -33,8 +36,7 @@ def getViewDefinition(pEntity, viewTitle):
         field = property2Field(fName, pProperty.__dict__)
 
         if pProperty.isForeign:
-            field["zoomModel"] = PROTO_PREFIX + \
-                getViewCode(pProperty.relationship.refEntity)
+            field["zoomModel"] = PROTO_PREFIX + getViewCode(pProperty.relationship.refEntity, viewSufx )
             field["fkId"] = fName + "_id"
             field["type"] = "foreigntext"
 
@@ -65,9 +67,9 @@ def getViewDefinition(pEntity, viewTitle):
         "sortable": True,
         "name": "__str__",
         "fkId": "id",
-        "zoomModel": PROTO_PREFIX + slugify2(viewTitle),
+        "zoomModel": PROTO_PREFIX + viewName,
         "cellLink": True,
-        "header": viewTitle,
+        "header": viewName,
         "readOnly": True,
         "type": "string",
         "physicalName": '@myStr("' + '","'.join(__str__Base) + '")'
@@ -78,11 +80,12 @@ def getViewDefinition(pEntity, viewTitle):
 
     # Details
     for pDetail in pEntity.refEntity_set.all():
+        detailName = getViewCode(pDetail.entity, viewSufx)
         detail = {
             "detailField": "info__" + slugify2(pDetail.code) + "_id",
-            "conceptDetail": PROTO_PREFIX + getViewCode(pDetail.entity),
-            "detailName": slugify2(pDetail.entity.code),
-            "menuText": pDetail.entity.code,
+            "conceptDetail": PROTO_PREFIX + detailName,
+            "detailName": detailName,
+            "menuText": detailName,
             "masterField": "pk"
         }
 
@@ -236,32 +239,31 @@ def GetDetailsConfigTree(protoEntityId):
     return lDetails
 
 
-def getEntities(queryset, request, viewTitle):
+def getEntities(queryset, request, viewSufix):
     """ Recorre las entidades para generar las vistas en bache por modelo """
 
     userProfile = getUserProfile(request.user)
     returnMsg = ''
 
+    viewSufx  = slugify2( verifyStr( viewSufix, '' ) )
+    
 #   Recorre los registros selccionados
     for pEntity in queryset:
         returnMsg += pEntity.code + ','
-        createView(pEntity, getViewCode(pEntity, viewTitle), userProfile)
+        createView(pEntity, viewSufx, userProfile)
 
     return returnMsg
 
 
-def createView(pEntity, viewTitle, userProfile):
+def createView(pEntity, viewSufx, userProfile ):
+    # 
 
-    viewName = slugify2(viewTitle)
-    infoEntity = getViewDefinition(pEntity, viewTitle)
+    infoEntity = getViewDefinition(pEntity, viewSufx)
 
-    # Debe corresponder al viewCodegenerado en el template ( infoEntity[viewCode] )
-    #viewCode = PROTO_PREFIX + viewName
 
     try:
-        # Crea el Prototype ( mismo nombre q la vista : necesario para los
-        # zooms y los detalles automaticos  )
-        rec = Prototype.objects.get_or_create(code=viewName,
+        # ShortTitle = viewName 
+        rec = Prototype.objects.get_or_create(code= infoEntity['shortTitle'] ,
                                               smOwningTeam=userProfile.userTeam,
                                               defaults={'entity_id':  pEntity.id})[0]
     except Exception:

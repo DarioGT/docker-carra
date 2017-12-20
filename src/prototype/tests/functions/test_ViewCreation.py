@@ -14,7 +14,7 @@ from protoExt.utils.utilsConvert import slugify2
 
 
 
-class GetViewDefinitionTest(TestCase):
+class GetView_DefinitionTest(TestCase):
 #     fixtures = ['auth.json', 'protolib.json', 'prototype.json']
 
 

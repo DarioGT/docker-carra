@@ -139,20 +139,20 @@ META_PROPERTIES = {
     "sheetSelector.help": "Campo de criterio para seleccionar el template, vacio para una unica plantilla por defecto DEFAULT",
     "template.help": "Definicion de la plantilla",
 
-    "templateFp.help": "Templante FirstPage",
-    "templateLp.help": "Templante LastPage",
+    # "templateFp.help": "Templante FirstPage",
+    # "templateLp.help": "Templante LastPage",
 
-    "templateBb.help": "Templante BeforeBlock",
-    "templateAb.help": "Templante AfterBlock",
+    # "templateBb.help": "Templante BeforeBlock",
+    # "templateAb.help": "Templante AfterBlock",
 
-    "templateBb": "<spam>------------------------------------</spam><br>",
-    "templateAb": "<spam>====================================</spam><br>",
+    # "templateBb": "<spam>------------------------------------</spam><br>",
+    # "templateAb": "<spam>====================================</spam><br>",
 
-    "templateEr.help": "EveryRow",
+    # "templateEr.help": "EveryRow",
 
-    "templateFp": "'<!DOCTYPE html>' + '<html>' + '<head>' + '<meta content=\"text/html; charset=UTF-8\" http-equiv=\"Content-Type\" />' + '<link href=\"/static/css/print.css\" rel=\"stylesheet\" type=\"text/css\" media=\"screen,print\" />' + '<title>PtReport : {{reportTitle}}</title>' + '</head>' + '<body>'",
+    # "templateFp": "'<!DOCTYPE html>' + '<html>' + '<head>' + '<meta content=\"text/html; charset=UTF-8\" http-equiv=\"Content-Type\" />' + '<link href=\"/static/css/print.css\" rel=\"stylesheet\" type=\"text/css\" media=\"screen,print\" />' + '<title>PtReport : {{reportTitle}}</title>' + '</head>' + '<body>'",
 
-    "templateLp": "'</body>' + '</html>'",
+    # "templateLp": "'</body>' + '</html>'",
 
     "direction": "sort order",
     "direction.choices": ["ASC", "DESC" ],

@@ -6,36 +6,41 @@ from django.conf import settings
 
 from protoExt.utils.downloadFile import getFullPath 
 
-from .viewDefinition import getViewDefinition, getViewCode, getEntities
+from .viewDefinition import getViewCode, getEntities
 from protoExt.utils.utilsBase import getReadableError
 from protoExt.utils.utilsConvert import slugify2
 from protoExt.utils.utilsFile import verifyDirPath
 import json
 
 
-def doModelPrototype( modeladmin, request, queryset, parameters):
+def doModelPrototype( modeladmin, request, queryset, parameters ):
     """ 
-    funcion para crear el prototipo sobre 'protoTable' con la definicion del diccionario
-    a partir de Model  
+    Build prototype in 'protoTable' ( protype.model based ) 
     """
 
 #   El QSet viene con la lista de Ids  
     if queryset.count() == 0:
         return  {'success':False, 'message' : 'No record selected' }
+
+
+    #  view prefix 
+    viewSufix = ''
+    if len( parameters ) == 1: 
+        viewSufix = parameters[0]['value'] 
         
 #   Mensaje de retorno
     returnMsg = '' 
 
 #   Recorre los registros selccionados   
     for pModel in queryset:
-        returnTmp = getEntities( pModel.entity_set.all() , request , None  )
+        returnTmp = getEntities( pModel.entity_set.all() , request , viewSufix  )
         returnMsg += 'Model : ' + pModel.code + ' Entts: ' + returnTmp + '; '    
 
     return {'success':True, 'message' : returnMsg } 
 
 
-def doEntityPrototype( modeladmin, request, queryset, parameters ):
 
+def doEntityPrototype( modeladmin, request, queryset, parameters ):
 #   El QSet viene con la lista de Ids  
     if queryset.count() != 1:
         return  {'success':False, 'message' : 'No record selected' }

@@ -1,6 +1,38 @@
 # -*- coding: utf-8 -*-
 
-# FUTURE: Agregar tags
+# 17/12 Dgt Deprecated smVersion
+
+"""
+the generation of VIEWS is by  a pcl,
+    
+     The pci has:
+         - list of fields from which to inherit;
+         - details you can define;
+    
+     the type of pcl will define the structure
+    
+     The structure will be sent from the BackEnd when required;
+     The validation of the pci is done in the backend
+     Field validation is done for safely in the backend for fieldLevel security
+    
+     Set up the additional menus (parametric ??)
+         group,
+         button
+         process
+         type of window
+         data
+        
+     Allows prototype menu
+         Details
+         Absorbed fields
+    
+     The edition of the pcl will close and open the option
+
+     The actions,
+         general
+         Model (depend on the model, it is not required to declare them in the admin)
+
+"""
 
 from django.db import models
 
@@ -22,91 +54,6 @@ from taggit.managers import TaggableManager
 
 PROTO_PREFIX = settings.PROTO_PREFIX
 
-"""
-    la generacion de las VISTAS se hace como una creacion de una pcl,
-    
-    La pci contedra ahora : 
-        - lista de campos desde los cuales heredar; 
-        - detalles q puede definir; 
-    
-    el tipo de pcl definira la estructura
-    
-    La estructura se enviara desde el BackEnd cuando se requiera; 
-    La validacion de la pci se hace en el backend
-    La validacion de campos se hace con seguridad en el backend ) fieldLevel security  
-    
-    Configuarar los menus adicionales  ( parametricos?? )
-        grupo, 
-        boton 
-        procedimiento
-        tipo de ventana 
-        datos 
-        
-    Menu de protipos permitira 
-        Detalles 
-        Campos absorbidos
-    
-    La edicion de la pcl cerrara y abrira la opcion
-
-    Las acciones,
-        General 
-        Model ( dependen del modelo, no se requiere declararlas en el admin ) 
-"""
-
-
-class ProtoVersionTitle(VersionTitle):
-
-    versionHeaders = [
-        "prototype.project",
-        "prototype.model",
-        "prototype.entity",
-        "prototype.property",
-        "prototype.propertyequivalence",
-        "prototype.diagram",
-        "prototype.diagramentity",
-        "prototype.prototype",
-    ]
-
-    versionExclude = [
-        "prototype.relationship" ,
-        "prototype.prototable",
-    ]
-
-    protoExt = {
-        "gridConfig": {
-            "listDisplay": ["__str__", "description", "smCreatedBy"]
-        }, 
-        "actions": [
-            { "name": "doCopyVersion", "selectionMode" : "single"}, 
-            { "name": "doDeleteVersion", "selectionMode" : "single"}, 
-        ],
-        "contextTo": [{
-            "deftModel": "prototype.project",
-            "deftField": "smVersion_id",
-        }, {
-            "deftModel": "prototype.model",
-            "deftField": "smVersion_id",
-        }, {
-            "deftModel": "prototype.entity",
-            "deftField": "smVersion_id",
-        }, {
-            "deftModel": "prototype.property",
-            "deftField": "smVersion_id",
-        }, {
-            "deftModel": "prototype.propertyequivalence",
-            "deftField": "smVersion_id",
-        }, {
-            "deftModel": "prototype.diagram",
-            "deftField": "smVersion_id",
-        }, {
-            "deftModel": "prototype.diagramentity",
-            "deftField": "smVersion_id",
-        }, {
-            "deftModel": "prototype.prototype",
-            "deftField": "smVersion_id",
-        }],
-    }
-
 
 
 class Project(ProtoModelExt):
@@ -124,14 +71,13 @@ class Project(ProtoModelExt):
     dbPort = models.CharField(blank=True, null=True, max_length=200)
 
     """Versioning"""
-    smVersion = models.ForeignKey(
-        'ProtoVersionTitle', blank=False, null=False, default=1)
+    smVersion = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return slugify2(self.code)
 
     class Meta:
-        unique_together = ('code', 'smOwningTeam', 'smVersion')
+        unique_together = ('code', 'smOwningTeam')
         # permissions = (( "read_domain", "Can read project"), )
 
     protoExt = {
@@ -184,11 +130,11 @@ class Model(ProtoModelExt):
     modelPrefix = models.CharField(blank=True, null=True, max_length=50)
     description = models.TextField(blank=True, null=True)
 
-    smVersion = models.ForeignKey('ProtoVersionTitle', blank=False, null=False, default=1)
+    smVersion = models.IntegerField(blank=True, null=True)
     smTags = TaggableManager(blank=True)
 
     class Meta:
-        unique_together = ('project', 'code', 'smOwningTeam', 'smVersion')
+        unique_together = ('project', 'code', 'smOwningTeam')
 
     unicode_sort = ('project', 'code',)
 
@@ -207,7 +153,10 @@ class Model(ProtoModelExt):
         }],
         "actions": [
             {"name": "doModelDiagram"},
-            {"name": "doModelPrototype"},
+            {"name": "doModelPrototype", "selectionMode": "single",
+             "actionParams": [
+               {"name": "prefix", "type": "string", "required": False, "tooltip": "views family"}
+              ] },
             {"name": "doExportProtoModel"},
             {"name": "doImportProtoModel",
              "actionParams": [
@@ -240,7 +189,7 @@ class Entity(ProtoModelExt):
     dbName = models.CharField(blank=True, null=True, max_length=200)
     description = models.TextField(blank=True, null=True)
 
-    smVersion = models.ForeignKey('ProtoVersionTitle', blank=False, null=False, default=1)
+    smVersion = models.IntegerField(blank=True, null=True)
 
     # Propieadad para ordenar el __str__
     unicode_sort = ('model', 'code',)
@@ -249,14 +198,14 @@ class Entity(ProtoModelExt):
         return slugify2(self.model.code + '-' + self.code)
 
     class Meta:
-        unique_together = ('model', 'code', 'smOwningTeam', 'smVersion')
+        unique_together = ('model', 'code', 'smOwningTeam')
 
     protoExt = {
         "actions": [
             {"name": "doEntityPrototype", "selectionMode": "single",
-             "actionParams": [{"name": "viewCode", "type": "string", "required": True,
-                               "tooltip": "option de menu (msi)"}
-                              ]
+             "actionParams": [
+               {"name": "viewCode", "type": "string", "required": True, "tooltip": "option de menu (msi)"}
+              ]
              },
         ],
         "detailsConfig": [
@@ -353,8 +302,7 @@ class Property(ProtoModelExt):
     """solo para ordenar los campos en la entidad"""
     # secuence = models.IntegerField(blank = True, null = True,)
 
-    smVersion = models.ForeignKey(
-        'ProtoVersionTitle', blank=False, null=False, default=1)
+    smVersion = models.IntegerField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if self.isPrimary:
@@ -364,7 +312,7 @@ class Property(ProtoModelExt):
         super(Property, self).save(*args, **kwargs)
 
     class Meta:
-        unique_together = ('entity', 'code', 'smOwningTeam', 'smVersion')
+        unique_together = ('entity', 'code', 'smOwningTeam')
 
     def __str__(self):
         return slugify2(self.entity.code + '-' + self.code)
@@ -442,15 +390,14 @@ class PropertyEquivalence(ProtoModelExt):
 
     description = models.TextField(blank=True, null=True)
 
-    smVersion = models.ForeignKey(
-        'ProtoVersionTitle', blank=False, null=False, default=1)
+    smVersion = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return slugify2(self.sourceProperty.code + ' - ' + self.targetProperty.code)
 
     class Meta:
         unique_together = (
-            'sourceProperty', 'targetProperty', 'smOwningTeam', 'smVersion')
+            'sourceProperty', 'targetProperty', 'smOwningTeam')
 
 #     def delete(self, *args, **kwargs):
 #       twoWayPropEquivalence( self, PropertyEquivalence, True )
@@ -494,7 +441,7 @@ class Prototype(ProtoModelBase):
     description = models.TextField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
 
-    smVersion = models.ForeignKey('ProtoVersionTitle', blank=False, null=False, default=1)
+    smVersion = models.IntegerField(blank=True, null=True)
 
     metaDefinition = JSONField(blank=True, null=True)
     objects = ProtoJSONManager(json_fields=['metaDefinition'])
@@ -509,7 +456,7 @@ class Prototype(ProtoModelBase):
     }
 
     class Meta:
-        unique_together = ('entity', 'code', 'smOwningTeam', 'smVersion')
+        unique_together = ('entity', 'code', 'smOwningTeam')
 
 
 class ProtoTable(ProtoModelBase):
@@ -577,8 +524,7 @@ class Diagram(ProtoModelExt):
     """Show ForeignKeys"""
     showFKey = models.BooleanField(default=False)
 
-    smVersion = models.ForeignKey(
-        'ProtoVersionTitle', blank=False, null=False, default=1)
+    smVersion = models.IntegerField(blank=True, null=True)
 
     # Propieadad para ordenar el __str__
     unicode_sort = ('project', 'code',)
@@ -594,7 +540,7 @@ class Diagram(ProtoModelExt):
         return slugify2(self.project.code + '-' + self.code)
 
     class Meta:
-        unique_together = ('project', 'code', 'smOwningTeam', 'smVersion')
+        unique_together = ('project', 'code', 'smOwningTeam')
 
     protoExt = {
         "actions": [
@@ -610,7 +556,7 @@ class DiagramEntity(ProtoModelExt):
     diagram = models.ForeignKey('Diagram', blank=False, null=False)
     entity = models.ForeignKey(Entity, blank=False, null=False)
 
-    smVersion = models.ForeignKey('ProtoVersionTitle', blank=False, null=False, default=1)
+    smVersion = models.IntegerField(blank=True, null=True)
 
     """Information graphique ( position, color, ... )  """
     info = JSONField(default={})
@@ -623,7 +569,7 @@ class DiagramEntity(ProtoModelExt):
         return slugify2(self.diagram.code + '-' + self.entity.code)
 
     class Meta:
-        unique_together = ('diagram', 'entity', 'smOwningTeam', 'smVersion')
+        unique_together = ('diagram', 'entity', 'smOwningTeam')
 
 
 # reversion.register(Project)

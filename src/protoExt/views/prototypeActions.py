@@ -28,14 +28,14 @@ def isPrototypePci(cBase):
 def getPrototypePci(cBase):
 
     if not hasattr ( cBase, 'cVersion' ): 
-        cBase.cVersion = 1 
+        cBase.cVersion = 0
 
     try:
         prototypeView = cBase.viewCode.replace(PROTO_PREFIX, '')
         protoDef = Prototype.objects.get(
             code=prototypeView, 
-            smOwningTeam=cBase.userProfile.userTeam, 
-            smVersion = cBase.cVersion
+            smOwningTeam=cBase.userProfile.userTeam 
+#           smVersion = cBase.cVersion
             )
 
         cBase.protoMeta = protoDef.metaDefinition

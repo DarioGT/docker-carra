@@ -21,7 +21,8 @@ TypeEquivalence = {
 
 
 
-def getViewCode( pEntity, viewTitle = None ):
-    if viewTitle is None:
-        viewTitle = pEntity.code
-    return slugify2( pEntity.model.code + '-' + viewTitle )
+def getViewCode( pEntity, viewSufx = '' ):
+    # Allow sufix for create +1 view / entity
+    if len( viewSufx ) > 0: viewSufx = '-' + viewSufx
+    return slugify2( pEntity.model.code + '-' + pEntity.code ) + viewSufx
+

@@ -20,10 +20,10 @@ from prototype.models import Entity
 
 
 
-from prototype.models import ProtoVersionTitle
+# from prototype.models import ProtoVersionTitle
 from protoLib.admin.admVersion import VersionAdm
   
-admin.site.register( ProtoVersionTitle, VersionAdm  )
+# admin.site.register( ProtoVersionTitle, VersionAdm  )
 # patch_admin(ProtoVersionTitle)
 
 

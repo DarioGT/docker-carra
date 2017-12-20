@@ -15,10 +15,10 @@ find . -name migrations  -type d -exec rm -r {} +
 sh ./doMigrate.sh 
 
 # Borrar contenido de las tablas 
-python manage.py sqlflush | python manage.py dbshell
+python3 manage.py sqlflush | python3 manage.py dbshell
 
 # Crear los datos 
-sh ./doloaddata.sh
+# sh ./doloaddata.sh
 
-# python ./manage.py createsuperuser
-# python manage.py createinitialrevisions
+# python3 ./manage.py createsuperuser
+# python3 manage.py createinitialrevisions

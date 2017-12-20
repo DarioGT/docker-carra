@@ -5,12 +5,10 @@ from protoExt.utils.utilsConvert import slugify2
 
 PROTO_PREFIX = "prototype.ProtoTable."
 
-def baseDefinition( pEntity , entityName, viewTitle  ):
+def baseDefinition( pEntity , entityName, viewName  ):
     """ protoEntity: Es la traza de la generacion del protipo  dominio.modelo.entidad  
     """ 
     
-    viewName   = slugify2( viewTitle  )
-
     return  {
     "__ptType": "pcl",
     "viewEntity": "prototype.ProtoTable",
@@ -21,7 +19,7 @@ def baseDefinition( pEntity , entityName, viewTitle  ):
     "jsonField"   : "info" ,
     "viewIcon"   : "icon-proto",
     "localSort"   : True, 
-    "shortTitle"  : viewTitle,
+    "shortTitle"  : viewName,
     "updateTime"  : datetime.now(),
     "metaVersion" : "13.0301",
     "idProperty"  : "id",

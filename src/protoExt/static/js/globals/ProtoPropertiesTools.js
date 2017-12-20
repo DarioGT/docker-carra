@@ -281,19 +281,19 @@ _SM._MetaProperties =  {
     "formSelector.help": "form selector field, null for DEFAULT form",
     "template.help": "template definition", 
 
-    "templateFp.help": "Templante FirstPage", 
-    "templateLp.help": "Templante LastPage",
+    // "templateFp.help": "Templante FirstPage", 
+    // "templateLp.help": "Templante LastPage",
      
-    "templateBb.help": "Templante BeforeBlock", 
-    "templateAb.help": "Templante AfterBlock", 
+    // "templateBb.help": "Templante BeforeBlock", 
+    // "templateAb.help": "Templante AfterBlock", 
 
-    "templateBb": "<spam>------------------------------------</spam><br>", 
-    "templateAb": "<spam>====================================</spam><br>", 
+    // "templateBb": "<spam>------------------------------------</spam><br>", 
+    // "templateAb": "<spam>====================================</spam><br>", 
 
-    "templateEr.help": "EveryRow", 
+    // "templateEr.help": "EveryRow", 
 
-    "templateFp":'<!DOCTYPE html><html><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type" /><link href="/static/css/print.css" rel="stylesheet" type="text/css" media="screen,print" /><title>PtReport : {{reportTitle}}</title></head><body>',
-    "templateLp":'</body></html>',
+    // "templateFp":'<!DOCTYPE html><html><head><meta content="text/html; charset=UTF-8" http-equiv="Content-Type" /><link href="/static/css/print.css" rel="stylesheet" type="text/css" media="screen,print" /><title>PtReport : {{reportTitle}}</title></head><body>',
+    // "templateLp":'</body></html>',
 
     "direction": "sort order",
     "direction.choices": ["ASC", "DESC" ],
@@ -749,7 +749,9 @@ _SM._MetaObjects = {
 
     "sheetDef" : {
         "description" : "Templates definition ( the name is the selector )",
-        "properties" : ["name", "template", "title", "viewIcon", "sheetType", "templateFp", "templateBb", "templateEr", "templateAb", "templateLp"],
+     // "properties" : ["name", "template", "title", "viewIcon", "sheetType", "templateFp", "templateBb", "templateEr", "templateAb", "templateLp"],
+        "properties" : ["name", "template", "title", "description", "viewIcon", "sheetType", "nameSpace", "pageExpr" ],
+
         "lists" : ["sheetDetails"],
         "addPrompt" : "Please enter the name for your sheet:",
         "allowDel" : true
