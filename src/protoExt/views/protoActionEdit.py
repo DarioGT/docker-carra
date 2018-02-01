@@ -93,6 +93,9 @@ def _protoEdit(request, myAction):
 
         if myAction == ACT_INS:
             rec = cBase.model()
+            if cBase.isProtoModel:
+                setattr(rec, 'smVersion_id', 1)
+            
         else:
             try:
                 rec = cBase.model.objects.get(pk=data['id'])
@@ -106,6 +109,9 @@ def _protoEdit(request, myAction):
             for key in data:
                 key = smart_str(key)
                 if key in ['id', '_ptStatus', '_ptId', '__str__']:
+                    continue
+
+                if key.endswith('ptr'): 
                     continue
 
 #               Tree Specific vars   

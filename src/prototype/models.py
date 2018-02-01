@@ -36,7 +36,9 @@ the generation of VIEWS is by  a pcl,
 
 from django.db import models
 
-from protoLib.models import ProtoModelBase, ProtoModelExt, ProtoJSONManager
+from protoLib.models import ProtoModelBase, ProtoModelExt, ProtoJSONManager, VersionTitle
+  
+
 from jsonfield2 import JSONField
 
 from .protoRules import ONDELETE_TYPES, BASE_TYPES, CRUD_TYPES, DB_ENGINE
@@ -45,7 +47,6 @@ from .protoRules import ONDELETE_TYPES, BASE_TYPES, CRUD_TYPES, DB_ENGINE
 from protoExt.utils.utilsConvert import slugify2
 from django.conf import settings
 
-from protoLib.models.versions import VersionTitle
 
 # import reversion
 # 1708 On le laisse ici pour ne pas changer all models 
@@ -53,6 +54,63 @@ from taggit.managers import TaggableManager
 
 
 PROTO_PREFIX = settings.PROTO_PREFIX
+
+
+class ProtoVersionTitle(VersionTitle):
+    # deprecated :: from prototype/models.py  
+    # doVersion.py 
+
+    versionHeaders = [
+        "prototype.project",
+        "prototype.model",
+        "prototype.entity",
+        "prototype.property",
+        "prototype.propertyequivalence",
+        "prototype.diagram",
+        "prototype.diagramentity",
+        "prototype.prototype",
+    ]
+
+    versionExclude = [
+        "prototype.relationship" ,
+        "prototype.prototable",
+    ]
+
+    protoExt = {
+        "gridConfig": {
+            "listDisplay": ["__str__", "description", "smCreatedBy"]
+        }, 
+        # "actions": [
+        #     { "name": "doCopyVersion", "selectionMode" : "single"}, 
+        #     { "name": "doDeleteVersion", "selectionMode" : "single"}, 
+        # ],
+        # "contextTo": [{
+        #     "deftModel": "prototype.project",
+        #     "deftField": "smVersion_id",
+        # }, {
+        #     "deftModel": "prototype.model",
+        #     "deftField": "smVersion_id",
+        # }, {
+        #     "deftModel": "prototype.entity",
+        #     "deftField": "smVersion_id",
+        # }, {
+        #     "deftModel": "prototype.property",
+        #     "deftField": "smVersion_id",
+        # }, {
+        #     "deftModel": "prototype.propertyequivalence",
+        #     "deftField": "smVersion_id",
+        # }, {
+        #     "deftModel": "prototype.diagram",
+        #     "deftField": "smVersion_id",
+        # }, {
+        #     "deftModel": "prototype.diagramentity",
+        #     "deftField": "smVersion_id",
+        # }, {
+        #     "deftModel": "prototype.prototype",
+        #     "deftField": "smVersion_id",
+        # }],
+    }
+    pass 
 
 
 
@@ -71,7 +129,7 @@ class Project(ProtoModelExt):
     dbPort = models.CharField(blank=True, null=True, max_length=200)
 
     """Versioning"""
-    smVersion = models.IntegerField(blank=True, null=True)
+    smVersion = models.ForeignKey(ProtoVersionTitle, blank=True, null=True)
 
     def __str__(self):
         return slugify2(self.code)
@@ -130,7 +188,7 @@ class Model(ProtoModelExt):
     modelPrefix = models.CharField(blank=True, null=True, max_length=50)
     description = models.TextField(blank=True, null=True)
 
-    smVersion = models.IntegerField(blank=True, null=True)
+    smVersion = models.ForeignKey(ProtoVersionTitle, blank=True, null=True)
     smTags = TaggableManager(blank=True)
 
     class Meta:
@@ -189,7 +247,7 @@ class Entity(ProtoModelExt):
     dbName = models.CharField(blank=True, null=True, max_length=200)
     description = models.TextField(blank=True, null=True)
 
-    smVersion = models.IntegerField(blank=True, null=True)
+    smVersion = models.ForeignKey(ProtoVersionTitle, blank=True, null=True)
 
     # Propieadad para ordenar el __str__
     unicode_sort = ('model', 'code',)
@@ -302,7 +360,7 @@ class Property(ProtoModelExt):
     """solo para ordenar los campos en la entidad"""
     # secuence = models.IntegerField(blank = True, null = True,)
 
-    smVersion = models.IntegerField(blank=True, null=True)
+    smVersion = models.ForeignKey(ProtoVersionTitle, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if self.isPrimary:
@@ -352,8 +410,7 @@ class Relationship(Property):
     refMax = models.CharField(blank=True, null=True, max_length=50)
 
     # Comportamiento en la db ( typeRelation : Fort, Info )
-    onRefDelete = models.CharField(
-        blank=True, null=True, max_length=50, choices=ONDELETE_TYPES)
+    onRefDelete = models.CharField(blank=True, null=True, max_length=50, choices=ONDELETE_TYPES)
     typeRelation = models.CharField(blank=True, null=True, max_length=50)
 
     def __str__(self):
@@ -390,7 +447,7 @@ class PropertyEquivalence(ProtoModelExt):
 
     description = models.TextField(blank=True, null=True)
 
-    smVersion = models.IntegerField(blank=True, null=True)
+    smVersion = models.ForeignKey(ProtoVersionTitle, blank=True, null=True)
 
     def __str__(self):
         return slugify2(self.sourceProperty.code + ' - ' + self.targetProperty.code)
@@ -441,7 +498,7 @@ class Prototype(ProtoModelBase):
     description = models.TextField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
 
-    smVersion = models.IntegerField(blank=True, null=True)
+    smVersion = models.ForeignKey(ProtoVersionTitle, blank=True, null=True)
 
     metaDefinition = JSONField(blank=True, null=True)
     objects = ProtoJSONManager(json_fields=['metaDefinition'])
@@ -524,7 +581,7 @@ class Diagram(ProtoModelExt):
     """Show ForeignKeys"""
     showFKey = models.BooleanField(default=False)
 
-    smVersion = models.IntegerField(blank=True, null=True)
+    smVersion = models.ForeignKey(ProtoVersionTitle, blank=True, null=True)
 
     # Propieadad para ordenar el __str__
     unicode_sort = ('project', 'code',)
@@ -556,7 +613,7 @@ class DiagramEntity(ProtoModelExt):
     diagram = models.ForeignKey('Diagram', blank=False, null=False)
     entity = models.ForeignKey(Entity, blank=False, null=False)
 
-    smVersion = models.IntegerField(blank=True, null=True)
+    smVersion = models.ForeignKey(ProtoVersionTitle, blank=True, null=True)
 
     """Information graphique ( position, color, ... )  """
     info = JSONField(default={})

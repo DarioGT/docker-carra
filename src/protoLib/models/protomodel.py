@@ -18,7 +18,7 @@ smControlFields = [
     'smCreatedBy',  'smModifiedBy', 'smCreatedBy_id',  'smModifiedBy_id', \
     'smCreatedOn', 'smModifiedOn', \
     'smWflowStatus', 'smRegStatus', \
-    'smNaturalCode', 'smUUID' ]
+    'smNaturalCode', 'smUUID', 'smVersion', 'smVersion_id' ]
 
 
 class ProtoModelBase(models.Model):
@@ -62,10 +62,13 @@ class ProtoModelBase(models.Model):
         
     def save(self, *args, **kwargs):
         # Disabled for loaddata
-        isRaw = kwargs.get('raw', False)          
+        isRaw = kwargs.get('raw', False)
 
         if not isRaw :
             cuser = CurrentUserMiddleware.get_user( False )
+
+            # Set fix version 180131 
+            self.smVersion_id = 1 
             
             if self._setNaturalCode:
                 self.smNaturalCode = self.__str__()
