@@ -34,7 +34,7 @@ def doGeneraBasicNet(modeladmin, request, queryset, parameters):
         edges.append( { 'from' : edge.node0.id, 'to': edge.node1.id })
 
     for node in Node.objects.all(): 
-        nodes.append( { 'id' : node.id, 'label': node.code })
+        nodes.append( { 'id' : node.id, 'label': node.label })
 
 
 #   jsonfiles 

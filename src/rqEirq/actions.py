@@ -58,7 +58,7 @@ def doGraphMerveille(modeladmin, request, queryset, parameters):
             category = catResponsable, 
             idSource = responsable.id, 
             code = responsable.code, 
-            label = verifyStr( responsable.alias, responsable.code), 
+            label = verifyStr( responsable.label, responsable.code), 
             defaults = jAux)[0]
         
         nAux = Node.objects.get_or_create(
