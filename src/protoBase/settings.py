@@ -36,15 +36,17 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'jsonfield2', 
+    'taggit',
+
     'protoLib', 
     'protoExt', 
     'prototype', 
     'rai01ref', 
+    'rqEirq', 
+    'protoGraph', 
 
-    'taggit',
     # 'import_export',     : deprecate warning importlib 
     # 'reversion',
-
     # 'rai00base', 
     # 'django_extensions',
 )

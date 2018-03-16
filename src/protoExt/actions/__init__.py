@@ -44,7 +44,6 @@ def doAddUser(modeladmin, request, queryset, parameters):
 
     return result
 
-    return
 
 def doAddUsers(modeladmin, request, queryset, parameters):
     """ 
@@ -64,7 +63,6 @@ def doAddUsers(modeladmin, request, queryset, parameters):
 
     return result
 
-    return
 
 
 def doFindReplace(modeladmin, request, queryset, parameters):
