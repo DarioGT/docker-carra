@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
-from protoExt.utils.downloadFile import getFullPath
+from protoExt.utils.downloadFile import getCustomPath
 
 # from protoExt.utils.utilsBase import getReadableError, traceError
 
@@ -34,22 +34,27 @@ def doGeneraBasicNet(modeladmin, request, queryset, parameters):
         edges.append( { 'from' : edge.node0.id, 'to': edge.node1.id })
 
     for node in Node.objects.all(): 
-        nodes.append( { 'id' : node.id, 'label': node.label })
+        nodes.append( { 
+            'id' : node.id, 
+            'label': node.label,   
+            'title': node.code, 
+            'group': node.category.code 
+            })
 
 
 #   jsonfiles 
-    fileName = 'graphNodes.json'
-    fullPath = getFullPath(request, fileName)
+    fileName = 'graphNodes.js'
+    fullPath =  getCustomPath( 'visjs', fileName )
 
     with open(fullPath, 'w') as file:
-        file.write(json.dumps(nodes)) # use `json.loads` to do the reverse
+        file.write('nodes = ' + json.dumps(nodes)) 
 
 #   jsonfiles 
-    fileName = 'graphEdges.json'
-    fullPath = getFullPath(request, fileName)
+    fileName = 'graphEdges.js'
+    fullPath =  getCustomPath( 'visjs', fileName )
 
     with open(fullPath, 'w') as file:
-        file.write(json.dumps(edges)) # use `json.loads` to do the reverse
+        file.write('edges = ' + json.dumps(edges)) 
 
 
     return {'success':True , 'message' :  'Ok' }

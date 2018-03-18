@@ -47,3 +47,12 @@ def getFullPath( request, filename ):
     
     return os.path.join( filePath, request.user.username + '.' + filename )
 
+
+def getCustomPath( dir, filename ):
+    from django.conf import settings
+
+    PPATH = os.path.join(  settings.BASE_DIR, dir ) 
+    filePath = verifyDirPath( PPATH )
+    if not filePath: return False
+    
+    return os.path.join( filePath, filename )

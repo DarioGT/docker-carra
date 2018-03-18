@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+  <title>EIRQ Merveille 2.0</title>
+
+  <script type="text/javascript" src="./vis.js"></script>
+  <link href="./vis-network.min.css" rel="stylesheet" type="text/css" />
+
+  <script type="text/javascript" src="./graphNodes.js"></script>
+  <script type="text/javascript" src="./graphEdges.js"></script>
+
+<!--   <style type="text/css">
+    #mynetwork {
+      border: 1px solid lightgray;
+    }
+  </style>
+ -->
+    <style>
+        body {
+            color: #d3d3d3;
+            font: 12pt arial;
+            background-color: #222222;
+        }
+
+        #mynetwork {
+            width: 1600px;
+            height: 800px;
+            border: 1px solid #444444;
+            background-color: #222222;
+        }
+    </style>
+
+
+</head>
+<body>
+
+
+<div id="mynetwork"></div>
+
+<script type="text/javascript">
+
+  // create a network
+  var container = document.getElementById('mynetwork');
+  var data = {
+    nodes: nodes,
+    edges: edges
+  };
+
+  var options = {
+      nodes: {
+          shape: 'dot',
+          size: 20,
+          font: { 
+              size: 15,
+              color: '#ffffff'
+          },
+          borderWidth: 2
+      },
+      edges: {
+          width: 2
+      },
+
+      groups: {
+          Responsable: {
+              color: {background:'red',border:'white'},
+              shape: 'star'
+          },
+      }
+  };
+
+
+  var network = new vis.Network(container, data, options);
+</script>
+
+
+</body>
+</html>

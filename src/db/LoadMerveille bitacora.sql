@@ -13,7 +13,7 @@ Delete from "protoGraph_node";
 Delete from "protoGraph_nodecategory";
 
 
-ATTACH '/home/certae/sm3/docker-carra/src/db/merveille.sqlite' AS `m`
+-- ATTACH '/home/certae/sm3/docker-carra/src/db/merveille.sqlite' AS `m`
 
 
 Insert into rqEirq_responsable ( code , smUUID ) 
@@ -46,12 +46,12 @@ update rqEirq_source set
 
 -- Deepndecncias  ALGO - Dependem del ID 
 
--- Insert into rqEirq_dependance ( produit_id, fichier_id , smUUID ) 
--- Select 126,  idFichier, '3e30537235d947d0996adc7faffaa088'  
---   from m.merveille2  where ALGO = 'x' 
+Insert into rqEirq_dependance ( produit_id, fichier_id , smUUID ) 
+Select 126,  idFichier, '3e30537235d947d0996adc7faffaa088'  
+  from m.merveille2  where ALGO = 'x' 
 
--- Insert into rqEirq_dependance ( produit_id, fichier_id , smUUID ) 
--- Select 130,  idFichier, '3e30537235d947d0996adc7faffaa088'  
---   from m.merveille2  where CoteISA = 'x'   
+Insert into rqEirq_dependance ( produit_id, fichier_id , smUUID ) 
+Select 130,  idFichier, '3e30537235d947d0996adc7faffaa088'  
+  from m.merveille2  where CoteISA = 'x'   
 
 
