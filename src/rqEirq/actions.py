@@ -12,10 +12,13 @@ def doGraphMerveille(modeladmin, request, queryset, parameters):
     from protoLib.getStuff import getUserProfile 
 
     userProfile = getUserProfile( request.user )
-    
-    # if queryset.count() < 1:
-    #     return  {'success':False, 'message' : 'No record selected' }
 
+
+#   El QSet viene con la lista de Ids  
+    if queryset.count() == 0:
+        return  {'success':False, 'message' : 'No record selected' }
+
+    
 
     jAux  = {
         'smOwningTeam' : userProfile.userTeam,
@@ -84,7 +87,10 @@ def doGraphMerveille(modeladmin, request, queryset, parameters):
 
 
     # Sources 
-    for source in Source.objects.all(): 
+#   Recorre los registros selccionados   
+    # Source.objects.all(): 
+    for source in queryset:
+
         # ????  -> IsResposable --> Source 
         nSource = Node.objects.get_or_create(
             category = catSource, 

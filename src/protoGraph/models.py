@@ -42,6 +42,16 @@ class Node(ProtoModelExt):
         unique_together = ('idSource', 'category')
 
 
+    protoExt = {
+        "gridConfig": {
+            "listDisplay": ["code", "label", "category", "description"]
+        },
+        "actions": [
+            {"name": "doGeneraBasicNet", "selectionMode": "none"},
+        ],
+    }
+
+
 class Edge(ProtoModelExt):
     code  = models.CharField(blank=True, null=True, max_length=200)
     node0 = models.ForeignKey( Node, blank= True, null= True, related_name='node0_set')
@@ -59,7 +69,7 @@ class Edge(ProtoModelExt):
             "listDisplay": ["code", "node0", "node1"]
         },
         "actions": [
-            {"name": "doGeneraBasicNet"},
+            {"name": "doGeneraBasicNet", "selectionMode": "none"},
         ],
     }
 

@@ -15,6 +15,7 @@ encoding//protoLib/getStuff.py=utf-8
 encoding//protoLib/models/__init__.py=utf-8
 encoding//protoLib/models/protomodel.py=utf-8
 encoding//prototype/actions/__init__.py=utf-8
+encoding//prototype/actions/reverseDb.py=utf-8
 encoding//prototype/actions/viewDefinition.py=utf-8
 encoding//prototype/actions/viewTemplate.py=utf-8
 encoding//prototype/models.py=utf-8

@@ -46,10 +46,9 @@ class Source(ProtoModelBase):
             "listDisplay": ["__str__", "typeSource", "responsable"]
         },
         "actions": [
-            {"name": "doGraphMerveille"},
+            {"name": "doGraphMerveille", "selectionMode": "multiple"},
         ],
     }
-
 
 
 class Fichier(ProtoModelBase):

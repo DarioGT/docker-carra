@@ -51,7 +51,7 @@ def protoWiki(request):
         message = getReadableError(e)
         return JsonError(message)
 
-    cRep.wikiPath = getParameter('wikiPath', '~/tmp/wiki')
+    cRep.wikiPath = getParameter('wikiPath', '/var/www/dokuwiki/data/pages')
 
     for reg in Qs:
         try:
