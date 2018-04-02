@@ -50,8 +50,46 @@ Insert into rqEirq_dependance ( produit_id, fichier_id , smUUID )
 Select 126,  idFichier, '3e30537235d947d0996adc7faffaa088'  
   from m.merveille2  where ALGO = 'x' 
 
+
 Insert into rqEirq_dependance ( produit_id, fichier_id , smUUID ) 
 Select 130,  idFichier, '3e30537235d947d0996adc7faffaa088'  
   from m.merveille2  where CoteISA = 'x'   
 
+
+--  UPD Source 
+
+update rqEirq_fichier set 
+  emplacement =  ( Select m.EmplacementDonnees from m.merveille2  as m where rqEirq_fichier.code =  m.NomFichier ); 
+
+
+update rqEirq_fichier set 
+  chaineChargement =  ( Select m.ChaineChargement from m.merveille2  as m where rqEirq_fichier.code =  m.NomFichier ); 
+
+update rqEirq_fichier set 
+  chaineExtraction =  ( Select m.ChaineExtraction from m.merveille2  as m where rqEirq_fichier.code =  m.NomFichier ); 
+
+update rqEirq_fichier set 
+  chaineNettoyage =  ( Select m.ChaineNettoyage from m.merveille2  as m where rqEirq_fichier.code =  m.NomFichier ); 
+
+update rqEirq_fichier set 
+  codeUntTraitement =  ( Select m.CodeUntTraitement from m.merveille2  as m where rqEirq_fichier.code =  m.NomFichier ); 
+
+update rqEirq_fichier set 
+  dgu =  ( Select m.DGU from m.merveille2  as m where rqEirq_fichier.code =  m.NomFichier ); 
+
+update rqEirq_fichier set 
+  frequence =  ( Select m.Frequence from m.merveille2  as m where rqEirq_fichier.code =  m.NomFichier ); 
+
+update rqEirq_fichier set 
+  reception =  ( Select m.Reception from m.merveille2  as m where rqEirq_fichier.code =  m.NomFichier ); 
+
+update rqEirq_fichier set 
+  scenario =  ( Select m.Scenario from m.merveille2  as m where rqEirq_fichier.code =  m.NomFichier ); 
+
+
+update rqEirq_fichier set 
+  typeExploitation =  ( Select m.TypeExploitation from m.merveille2  as m where rqEirq_fichier.code =  m.NomFichier ); 
+
+update rqEirq_fichier set 
+  vpa =  ( Select m.VPA from m.merveille2  as m where rqEirq_fichier.code =  m.NomFichier ); 
 

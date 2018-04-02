@@ -1,0 +1,1 @@
+./manage.py graph_models rqEirq > rqEirq

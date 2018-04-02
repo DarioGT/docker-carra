@@ -1,0 +1,100 @@
+
+class Dependance(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    fichier = models.ForeignKey('Fichier', blank=True, null=True)
+    produit = models.ForeignKey('Source', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = '_dependance'
+
+
+class Fichier(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    code = models.CharField(max_length=200, blank=True, null=True)
+    responsable = models.ForeignKey('Responsable', blank=True, null=True)
+    source = models.ForeignKey('Source', blank=True, null=True)
+    label = models.CharField(max_length=200, blank=True, null=True)
+    chainechargement = models.CharField(db_column='chaineChargement', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    chaineextraction = models.CharField(db_column='chaineExtraction', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    chainenettoyage = models.CharField(db_column='chaineNettoyage', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    codeunttraitement = models.CharField(db_column='codeUntTraitement', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    description = models.CharField(max_length=500, blank=True, null=True)
+    dgu = models.CharField(max_length=50, blank=True, null=True)
+    emplacement = models.CharField(max_length=50, blank=True, null=True)
+    frequence = models.CharField(max_length=50, blank=True, null=True)
+    notes = models.CharField(max_length=500, blank=True, null=True)
+    reception = models.CharField(max_length=50, blank=True, null=True)
+    scenario = models.CharField(max_length=50, blank=True, null=True)
+    typeexploitation = models.CharField(db_column='typeExploitation', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    typef = models.CharField(db_column='typeF', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    urldoc = models.CharField(db_column='urlDoc', max_length=500, blank=True, null=True)  # Field name made lowercase.
+    urlmeta = models.CharField(db_column='urlMeta', max_length=500, blank=True, null=True)  # Field name made lowercase.
+    urlmodel = models.CharField(db_column='urlModel', max_length=500, blank=True, null=True)  # Field name made lowercase.
+    vpa = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = '_fichier'
+
+
+class Responsable(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    code = models.CharField(max_length=200, blank=True, null=True)
+    coordonnees = models.CharField(max_length=200, blank=True, null=True)
+    notes = models.CharField(max_length=200, blank=True, null=True)
+    label = models.CharField(max_length=200, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = '_responsable'
+
+
+class Ressourcetech(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    ressource = models.ForeignKey(Responsable, blank=True, null=True)
+    technologie = models.ForeignKey('Technologie', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = '_ressourcetech'
+
+
+class Source(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    code = models.CharField(max_length=200, blank=True, null=True)
+    typesource = models.CharField(db_column='typeSource', max_length=20, blank=True, null=True)  # Field name made lowercase.
+    label = models.CharField(max_length=200, blank=True, null=True)
+    description = models.CharField(max_length=500, blank=True, null=True)
+    notes = models.CharField(max_length=500, blank=True, null=True)
+    pilote = models.ForeignKey(Responsable, blank=True, null=True)
+    urldoc = models.CharField(db_column='urlDoc', max_length=500, blank=True, null=True)  # Field name made lowercase.
+    responsable = models.ForeignKey(Responsable, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = '_source'
+
+
+class Techchargement(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    fichier = models.ForeignKey(Fichier, blank=True, null=True)
+    technologie = models.ForeignKey('Technologie', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = '_techchargement'
+
+
+class Technologie(models.Model):
+    id = models.IntegerField(primary_key=True)  # AutoField?
+    code = models.CharField(max_length=200, blank=True, null=True)
+    label = models.CharField(max_length=200, blank=True, null=True)
+    description = models.CharField(max_length=500, blank=True, null=True)
+    typet = models.CharField(db_column='typeT', max_length=20, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = '_technologie'
+
+

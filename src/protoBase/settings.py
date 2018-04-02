@@ -48,7 +48,7 @@ INSTALLED_APPS = (
     # 'import_export',     : deprecate warning importlib 
     # 'reversion',
     # 'rai00base', 
-    # 'django_extensions',
+    'django_extensions',
 )
 
 MIDDLEWARE_CLASSES = (
