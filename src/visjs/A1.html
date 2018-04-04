@@ -1,0 +1,23 @@
+<html>
+<head>
+  <title>Source A1</title>
+
+  <script type="text/javascript" src="./vis.js"></script>
+  <link href="./vis-network.min.css" rel="stylesheet" type="text/css" />
+
+  
+</head>
+<body>
+<p>
+  SoftMachine Source A1.
+</p>
+<div id="mynetwork"></div>
+
+<script type="text/javascript">
+  var container = document.getElementById('mynetwork');
+  var dot = 'dinetwork {node[shape=box]; A1Assignequipprio -> A1Assignequip; A1Catgphrainv -> A1Phrainv; A1Champadm -> A1Declparti; A1Champadmfid -> A1Declparti; A1Clereperassoc -> A1Dossfiscanusag; A1Critrrisqparti -> A1Pondrrisqan; A1Decllign2 -> A1Declparti; A1Decllign2Bl -> A1Declparti; A1Decllign2Vp -> A1Declparti; A1Decllign3 -> A1Declparti; A1Decllign3Bl -> A1Declparti; A1Decllign3Vp -> A1Declparti; A1Decllign -> A1Declparti; A1Decllignbl -> A1Declparti; A1Decllignfid2 -> A1Declparti; A1Decllignfid2Bl -> A1Declparti; A1Decllignfid2Vp -> A1Declparti; A1Decllignfid -> A1Declparti; A1Decllignfidbl -> A1Declparti; A1Decllignfidvp -> A1Declparti; A1Decllignmul3 -> A1Decllignmulmul; A1Decllignmul3Bl -> A1Decllignmulmulbl; A1Decllignmul3Vp -> A1Decllignmulmulvp; A1Decllignmul -> A1Declparti; A1Decllignmulbl -> A1Declparti; A1Decllignmulmul -> A1Decllignmul; A1Decllignmulmulbl -> A1Decllignmulbl; A1Decllignmulmulvp -> A1Decllignmulvp; A1Decllignmulvp -> A1Declparti; A1Decllignvp -> A1Declparti; A1Declparti -> A1Dossfiscanusag; A1Decltransf -> A1Declparti; A1Detlencai -> A1Encai; A1Detlencai -> A1Infotrim; A1Detlentreejourn -> A1Journentreeutil; A1Detlentreereglr -> A1Journreglrdossfisc; A1Detleven -> A1Even; A1Detlintra -> A1Agenintra; A1Encai -> A1Declparti; A1Encaimodif -> A1Declparti; A1Entrpr -> A1Declparti; A1Even -> A1Declparti; A1Immeub -> A1Declparti; A1Infotrim -> A1Declparti; A1Intervtempr -> A1Declparti; A1Journentreeutil -> A1Rejetdecl; A1Liensocfisc -> A1Declparti; A1Notifdecl -> A1Declparti; A1Pairetro -> A1Declparti; A1Perinteacomptprovsn -> A1Declparti; A1Perinteacomptprovsn -> A1Infotrim; A1Perintesold -> A1Declparti; A1Perintesold -> A1Even; A1Phraavis -> A1Declparti; A1Pondrrisqan -> A1Dossfiscparti; A1Rejetdecl -> A1Declparti; A1Rejetdfcentrpr -> A1Entrpr; A1Rejetdfcimmeub -> A1Immeub; A1Rejetdfcimmeubfid -> A1Decllignmulmul; A1Rejetimprhist -> A1Donnlistconthist; A1Rentbloper -> A1Declparti; A1Rentbloper -> A1Rejetdecl; A1Reprtfaitsnouvart -> A1Declparti; A1Rnclistremb -> A1Declparti; A1Segrejet -> A1Rejetdecl; A1Segrejetdfcentrpr -> A1Rejetdfcentrpr; A1Segrejetdfcimmeub -> A1Rejetdfcimmeub; A1Segrejetdfcimmeubfid -> A1Rejetdfcimmeubfid; A1Temprrejetimpr -> A1Donntemprlistcont; A1Textphrainv -> A1Phrainv; A1Valint -> A1Declparti; A1Varcotisfid -> A1Declparti; A1Varcotisphoto -> A1Declparti; A1Varphraavis -> A1Phraavis; A1Vartextphrainv -> A1Textphrainv;}';
+  var data = vis.network.convertDot(dot);
+  var network = new vis.Network(container, data);
+</script>
+</body>
+</html>

@@ -52,7 +52,11 @@ class Source(ProtoModelBase):
             "listDisplay": ["__str__", "typeSource", "responsable"]
         },
         "actions": [
-            {"name": "doGraphMerveille", "selectionMode": "multiple"},
+            {"name": "doGraphMerveille", "selectionMode": "multiple", 
+              "actionParams": [
+                {"name" : "NewGraph", "type" : "boolean", "tooltip" : "Clear old graph" }
+                ], 
+            },
         ],
     }
 

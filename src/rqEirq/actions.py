@@ -18,6 +18,10 @@ def doGraphMerveille(modeladmin, request, queryset, parameters):
     if queryset.count() == 0:
         return  {'success':False, 'message' : 'No record selected' }
 
+
+    bClean = "" 
+    if len(parameters) == 1:
+        bClean = parameters[0]['value']  
     
 
     jAux  = {
@@ -28,10 +32,11 @@ def doGraphMerveille(modeladmin, request, queryset, parameters):
 
 
     # Clean 
-    Node.objects.all().delete()  
-    Edge.objects.all().delete() 
-    NodeCategory.objects.all().delete() 
-    EdgeCategory.objects.all().delete() 
+    if bClean == "1":
+        Node.objects.all().delete()  
+        Edge.objects.all().delete() 
+        NodeCategory.objects.all().delete() 
+        EdgeCategory.objects.all().delete() 
 
 
     # Catetegories Nodes Principaux 
