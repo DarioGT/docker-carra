@@ -1,0 +1,42 @@
+EXECUTER !!!
+
+- sm.bat
+- pip install xxx.tar.gz
+- C:\Program Files\Python36\Lib\site-packages
+
+NOTES
+
+  Borrar WhiteNoise C:\Users\rgod021\Downloads\sofmachine-master\src\protoBase\wsgi.py
+  Cambiar la extencion .dot x .gv 
+
+  Borrar directorios de migracion prototype, protoext, eirq,... 
+
+--   
+  
+- Add Python path 
+- Add Python/scripts  path 
+
+"C:\Program Files\Python36\";"C:\Program Files\Python36\Scripts";c:\progra~2\oracle\product\12.1.0\client_2;c:\progra~2\oracle\product\12.1.0\client_2\bin;c:\progra~2\oracle\product\12.1.0\client_1\bin;c:\progra~1\oracle\product\12.1.0\client_2;c:\progra~1\oracle\product\12.1.0\client_2\bin;c:\progra~1\oracle\product\12.1.0\client_1\bin;%SystemRoot%\system32;%SystemRoot%;%SystemRoot%\System32\Wbem;%systemroot%\System32\WindowsPowerShell\v1.0\;%systemroot%\System32\WindowsPowerShell\v1.0\;C:\App\xpunt1\;C:\Program Files\Adobe\Adobe PDF iFilter 11 for 64-bit platforms\bin;%systemroot%\System32\WindowsPowerShell\v1.0\
+
+
+- Install from local files 
+- Django 1.8.2 ==>  TODO: Migrar a 1.11  LTS 
+
+	https://packaging.python.org/tutorials/installing-packages/#installing-from-local-archives
+	pip install Django-1.6.11.tar.gz
+
+	Ok 
+	
+- SQLite   ( C:\Document\bin\sqlite3 )   Not need x already with python 
+
+- python manage.py runserver
+	- Error HTML   HTMLParserError; refs #23763. 
+	- https://github.com/django/django/blob/b07aa52e8a8e4c7fdc7265f75ce2e7992e657ae9/django/utils/html_parser.py
+	- taggit 
+	
+
+PyGraph 
+	- Add toPATH 
+
+"C:\Program Files\Python36\";C:\Document\bin\graphviz\bin;"C:\Program Files\Python36\Scripts";c:\progra~2\oracle\product\12.1.0\client_2;c:\progra~2\oracle\product\12.1.0\client_2\bin;c:\progra~2\oracle\product\12.1.0\client_1\bin;c:\progra~1\oracle\product\12.1.0\client_2;c:\progra~1\oracle\product\12.1.0\client_2\bin;c:\progra~1\oracle\product\12.1.0\client_1\bin;%SystemRoot%\system32;%SystemRoot%;%SystemRoot%\System32\Wbem;%systemroot%\System32\WindowsPowerShell\v1.0\;%systemroot%\System32\WindowsPowerShell\v1.0\;C:\App\xpunt1\;C:\Program Files\Adobe\Adobe PDF iFilter 11 for 64-bit platforms\bin;%systemroot%\System32\WindowsPowerShell\v1.0\
+"C:\Program Files\Python36\";C:\Document\bin\graphviz\bin;"C:\Program Files\Python36\Scripts";c:\progra~2\oracle\product\12.1.0\client_2;c:\progra~2\oracle\product\12.1.0\client_2\bin;c:\progra~2\oracle\product\12.1.0\client_1\bin;c:\progra~1\oracle\product\12.1.0\client_2;c:\progra~1\oracle\product\12.1.0\client_2\bin;c:\progra~1\oracle\product\12.1.0\client_1\bin;%SystemRoot%\system32;%SystemRoot%;%SystemRoot%\System32\Wbem;%systemroot%\System32\WindowsPowerShell\v1.0\;%systemroot%\System32\WindowsPowerShell\v1.0\;C:\App\xpunt1\;C:\Program Files\Adobe\Adobe PDF iFilter 11 for 64-bit platforms\bin;%systemroot%\System32\WindowsPowerShell\v1.0\
