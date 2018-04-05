@@ -18,6 +18,6 @@ application = get_wsgi_application()
 
 # ======================   DEPLOY 
 
-from whitenoise.django import DjangoWhiteNoise
-application = DjangoWhiteNoise(application)
+# from whitenoise.django import DjangoWhiteNoise
+# application = DjangoWhiteNoise(application)
 

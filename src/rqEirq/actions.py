@@ -7,7 +7,6 @@ def doGraphMerveille(modeladmin, request, queryset, parameters):
     to generate graphs
     """
 
-    from rqEirq.models import Source 
     from protoGraph.models import NodeCategory, EdgeCategory, Node, Edge 
     from protoLib.getStuff import getUserProfile 
 
@@ -59,7 +58,46 @@ def doGraphMerveille(modeladmin, request, queryset, parameters):
     edgSrcDependance1 = EdgeCategory.objects.get_or_create( code = 'SrcDependance1', defaults = jAux)[0]
 
 
-    def creaResponsable( responsable, nSource ):
+    def newEdge( hubType, node0, node1  ):
+
+        edgAux = Edge.objects.get_or_create(
+            category = hubType, 
+            node0 = node0, 
+            node1 = node1, 
+            code =  hubType.code, 
+            defaults = jAux)[0]
+            
+        return edgAux
+
+
+    def newNodeSource( source ):
+        # newNode Source and hubFichier
+        # Return nSource, nHubFichier 
+
+        nSource = Node.objects.get_or_create(
+            category = catSource, 
+            idSource = source.id, 
+            code = source.code, 
+            label = verifyStr( source.label, source.code), 
+            defaults = jAux)[0]
+
+       
+        nHub = Node.objects.get_or_create(
+            category = hubSrcFichier, 
+            idSource = source.id, 
+            code = source.code, 
+            label = hubSrcFichier.code, 
+            defaults = jAux)[0]
+
+        newEdge( edgSrcFichier0, nSource, nHub  )
+
+        return nSource, nHub
+
+
+
+
+    def newNodeResponsable( responsable, nSource ):
+
 
         # XXX --> IsResposable --> Source 
         nResp = Node.objects.get_or_create(
@@ -76,111 +114,71 @@ def doGraphMerveille(modeladmin, request, queryset, parameters):
             label = hubSrcResponsable.code, 
             defaults = jAux)[0]
 
-        edgAux = Edge.objects.get_or_create(
-            category = edgSrcResponsable0, 
-            node0 = nResp, 
-            node1 = nAux, 
-            code = edgSrcResponsable0.code, 
-            defaults = jAux)[0]
 
-        edgAux = Edge.objects.get_or_create(
-            category = edgSrcResponsable1, 
-            node0 = nAux, 
-            node1 = nSource, 
-            code = edgSrcResponsable1.code, 
-            defaults = jAux)[0]
+        newEdge( edgSrcResponsable0, nResp, nAux  )
+        newEdge( edgSrcResponsable1, nAux, nSource  )
 
 
-    # Sources 
-#   Recorre los registros selccionados   
-    # Source.objects.all(): 
-    for source in queryset:
-
-        # ????  -> IsResposable --> Source 
-        nSource = Node.objects.get_or_create(
-            category = catSource, 
-            idSource = source.id, 
-            code = source.code, 
-            label = verifyStr( source.label, source.code), 
-            defaults = jAux)[0]
+    def newNodeResponsableSource( source, nSource ):
 
         # Responsable 
         try:
             responsable = source.responsable
-            creaResponsable( responsable, nSource )
         except Exception as e:
-            pass 
+            return 
+
+        newNodeResponsable( responsable, nSource )
 
 
-        # Source  --> contiens --> ???  ( fichiers )
-        nAux = Node.objects.get_or_create(
-            category = hubSrcFichier, 
-            idSource = source.id, 
-            code = source.code, 
-            label = hubSrcFichier.code, 
+    def newNodeFichier( fichier, nHubFichier, edge ):
+
+        nFichier = Node.objects.get_or_create(
+            category = catFichier, 
+            idSource = fichier.id, 
+            code = fichier.code, 
+            label = verifyStr( fichier.label, fichier.code ), 
             defaults = jAux)[0]
 
+        newEdge( edge, nFichier, nHubFichier  )
 
-        edgAux = Edge.objects.get_or_create(
-            category = edgSrcFichier0, 
-            node0 = nSource, 
-            node1 = nAux, 
-            code =  edgSrcFichier0.code, 
-            defaults = jAux)[0]
+        return nFichier
 
 
+    # Sources 
+    for source in queryset:
+
+        nSource, nHubFichier = newNodeSource(source)
+        newNodeResponsableSource( source, nSource )
+
+        # Source  --> contiens --> fichiers 
         for fichier in source.fichier_set.all(): 
-            # Source  --> contiens --> ???  ( fichiers )
-
-            nFichier = Node.objects.get_or_create(
-                category = catFichier, 
-                idSource = fichier.id, 
-                code = fichier.code, 
-                label = verifyStr( fichier.label, fichier.code ), 
-                defaults = jAux)[0]
-
-            edgAux = Edge.objects.get_or_create(
-                category = edgSrcFichier1, 
-                node0 = nAux, 
-                node1 = nFichier, 
-                code =  edgSrcFichier1.code, 
-                defaults = jAux)[0]
+            newNodeFichier( fichier, nHubFichier, edgSrcFichier1 )
 
 
+        # Dependences 
         newHub = True 
         for s0 in source.dependance_set.all(): 
-            # Source  --> depend --> ???  ( fichiers )
+            # Source  --> depend --> fichiers
 
             if newHub: 
                 newHub = False
-                nAux = Node.objects.get_or_create(
+                nHubDep = Node.objects.get_or_create(
                     category = hubSrcDependance, 
                     idSource = source.id, 
                     code = source.code, 
                     label = hubSrcDependance.code, 
                     defaults = jAux)[0]
 
-                edgAux = Edge.objects.get_or_create(
-                    category = edgSrcDependance0, 
-                    node0 = nSource, 
-                    node1 = nAux, 
-                    code =  edgSrcDependance0.code, 
-                    defaults = jAux)[0]
+                newEdge( edgSrcDependance0, nSource, nHubDep  )
 
-            nFichier = Node.objects.get_or_create(
-                category = catFichier, 
-                idSource = s0.fichier.id, 
-                code = s0.fichier.code, 
-                label = verifyStr( s0.fichier.label, s0.fichier.code ), 
-                defaults = jAux)[0]
 
-            edgAux = Edge.objects.get_or_create(
-                category = edgSrcDependance1, 
-                node0 = nAux, 
-                node1 = nFichier, 
-                code =  edgSrcDependance1.code, 
-                defaults = jAux)[0]
+            nFichier = newNodeFichier( s0.fichier, nHubDep, edgSrcDependance1 )
+            nSource, nHubFichier = newNodeSource( s0.fichier.source )
+            newEdge( edgSrcFichier1, nHubFichier, nFichier  )
 
+            newNodeResponsableSource( s0.fichier.source, nSource )
 
 
     return {'success':True , 'message' :  'Ok' }
+
+
