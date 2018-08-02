@@ -44,18 +44,6 @@ update rqEirq_source set
 
 
 
--- Deepndecncias  ALGO - Dependem del ID 
-
-Insert into rqEirq_dependance ( produit_id, fichier_id , smUUID ) 
-Select 126,  idFichier, '3e30537235d947d0996adc7faffaa088'  
-  from m.merveille2  where ALGO = 'x' 
-
-
-Insert into rqEirq_dependance ( produit_id, fichier_id , smUUID ) 
-Select 130,  idFichier, '3e30537235d947d0996adc7faffaa088'  
-  from m.merveille2  where CoteISA = 'x'   
-
-
 --  UPD Source 
 
 update rqEirq_fichier set 
@@ -93,3 +81,91 @@ update rqEirq_fichier set
 update rqEirq_fichier set 
   vpa =  ( Select m.VPA from m.merveille2  as m where rqEirq_fichier.code =  m.NomFichier ); 
 
+
+
+-- DEPENDANCES 
+
+
+
+-- Deepndecncias  ALGO - Dependem del ID 
+
+Insert into rqEirq_dependance ( produit_id, fichier_id , smUUID ) 
+Select 126,  idFichier, '3e30537235d947d0996adc7faffaa088'  
+  from m.merveille2  where ALGO = 'x' 
+
+
+Insert into rqEirq_dependance ( produit_id, fichier_id , smUUID ) 
+Select 130,  idFichier, '3e30537235d947d0996adc7faffaa088'  
+  from m.merveille2  where CoteISA = 'x'   
+
+
+
+
+
+  `ALGO`  TEXT,
+  `Avantagelogement`  TEXT,
+  `AvantagelogementHQ`  TEXT,
+  `BNR` TEXT,
+  `CoteISA` TEXT,
+  `CreancesFiscales`  TEXT,
+  `DerivationD2BBB` TEXT,
+  `DerivationD2BBC` TEXT,
+  `DivulgationVolontaire` TEXT,
+  `EnquetesSpeciales` TEXT,
+  `ExtractionMAD` TEXT,
+  `GainCapital` TEXT,
+  `IGIF`  TEXT,
+  `IGSEVIR` TEXT,
+  `IndustrieVetement` TEXT,
+  `IR_NP` TEXT,
+  `IR_SD` TEXT,
+  `IR_Societe`  TEXT,
+  `IR_selectionNP`  TEXT,
+  `IR_selectionSD`  TEXT,
+  `IR_MouvementTresorerie`  TEXT,
+  `IR_CasRisqueActifs`  TEXT,
+  `IR_CasRisque_non_production` TEXT,
+  `IR_CasRisque_sous_declaration` TEXT,
+  `Location_ImmeublesParticulier` TEXT,
+  `Location_ImmeublesSocietes`  TEXT,
+  `Nelson_Declaration_debitrice`  TEXT,
+  `PDD` TEXT,
+  `Projet_MIRE` TEXT,
+  `Qui_vit_la`  TEXT,
+  `RAS_TAX` TEXT,
+  `RDPRM` TEXT,
+  `DGP_Pension_alimentaire` TEXT,
+  `Recouvrement_alimentaire`  TEXT,
+  `ReferentielAdresses_D2`  TEXT,
+  `Referentiel_D2_ADR_REF`  TEXT,
+  `Referentiel_D2_REF_ADR_COMPL`  TEXT,
+  `Referentiel_D2_REF_ADR_DGEQ` TEXT,
+  `Referentiel_lien_de_parente` TEXT,
+  `Referentiel_lien_personne_entreprise`  TEXT,
+  `Releves` TEXT,
+  `Renseignements_verificateurs`  TEXT,
+  `Resto` TEXT,
+  `DGP_Pensions_alimentaires` TEXT,
+  `Resto_Indices` TEXT,
+  `RQAP`  TEXT,
+  `SMCM`  TEXT,
+  `Statut_de_residence` TEXT,
+  `Tableau_de_bord_Centrale_de_donnees` TEXT,
+  `Tableau_de_bord_DGP` TEXT,
+  `Tableau_de_bord_DGTT`  TEXT,
+  `Tableau_de_bord_Service_client`  TEXT,
+  `Taxes_percues_non_remises` TEXT,
+  `Transactions_immob_personnes_liees`  TEXT,
+  `RPSIPA`  TEXT,
+  `Cube_D3_Renseignement` TEXT,
+  `Cube_D3_Renseignements_en_erreur`  TEXT,
+  `IGALFI`  TEXT,
+  `IGSEVIR2`  TEXT,
+  `Cubes_SICAR` TEXT,
+  `F7_DIVO` TEXT,
+  `id`  INTEGER NOT NULL,
+  `Responsable` TEXT,
+  `idResponsable` INTEGER,
+  `idSource`  INTEGER,
+  `idFichier` INTEGER
+)
