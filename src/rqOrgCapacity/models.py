@@ -6,10 +6,10 @@ from protoLib.models.protomodel import ProtoModelBase
 
 
 
-TYPERESPONSABLE_CHOICES = (
-        ('Persona', 'Per'),
-        ('UniteOrg', 'UO'),
-    )
+# TYPERESPONSABLE_CHOICES = (
+#         ('Persona', 'Per'),
+#         ('UniteOrg', 'UO'),
+#     )
 
 
 class Resource(ProtoModelBase):
@@ -17,13 +17,13 @@ class Resource(ProtoModelBase):
     code  = models.CharField(blank=True, null=True, max_length=200)
 
     # Hierarchy
-    parent = models.ForeignKey('Resource', blank= True, null= True)
+    #parent = models.ForeignKey(self, blank= True, null= True)
 
     # Nom, Prenom ;  BUnit ; CCost  
     description  = models.CharField(blank=True, null=True, max_length=200)
 
     # Personne, BussUnit 
-    typeResource = models.CharField( blank= True, null= True, max_length=20, choices=TYPERESPONSABLE_CHOICES )
+    typeResource = models.CharField( blank= True, null= True, max_length=20 )
 
     # Analiste, Technique, Architect 
     catResource = models.CharField( blank= True, null= True, max_length=20 )
@@ -31,6 +31,15 @@ class Resource(ProtoModelBase):
     email  = models.CharField(blank=True, null=True, max_length=200)
     coordonnees  = models.CharField(blank=True, null=True, max_length=200)
     notes   = models.CharField(blank=True, null=True, max_length=200)
+
+    # Sum of ResourceSkill.Capacity  ( in hours, ) 
+    capacityResource  = models.IntegerField(blank=True, null=True)
+
+    # Sum of ResourceSkill.CapacityAssigned
+    capacityAssigned  = models.IntegerField(blank=True, null=True)
+
+    # Sum of ResourceSkill.CapacityAssigned
+    capacityIdle  = models.IntegerField(blank=True, null=True)
 
 
     def __str__(self):
@@ -49,45 +58,42 @@ class Skill(ProtoModelBase):
     # Tech, Methode, Leader 
     skillType = models.CharField( blank= True, null= True, max_length=20)
 
+
+    # Sum of TaskSkill Capacity needed ( hours, ) 
+    capacityNeed  = models.IntegerField(blank=True, null=True)
+
+    # Sum of TaskSkill CapacityAssigned by Task
+    capacityAssigned  = models.IntegerField(blank=True, null=True)
+
+    # Sum of TaskSkill CapacityIdle
+    capacityAvailable  = models.IntegerField(blank=True, null=True)
+
+    # capacityNeed - capacityAssigned
+    capacityGap  = models.IntegerField(blank=True, null=True)
+
+
     def __str__(self):
         return slugify2(self.code )
 
 
 class ResourceSkill(ProtoModelBase):
-    resource = models.ForeignKey('Resource', blank= True, null= True)
-    skill = models.ForeignKey('Skill', blank= True, null= True)
+    resource = models.ForeignKey(Resource, blank= True, null= True)
+    skill = models.ForeignKey(Skill, blank= True, null= True)
 
     # Interet, Competent, Expert 
     skillLevel  = models.CharField(blank=True, null=True, max_length=200)
 
     # Capacity in ( hours, ) 
-    capacityResource  = models.IntegerField(blank=True, null=True, max_length=200)
+    capacityResource  = models.IntegerField(blank=True, null=True)
 
     # Sum of CapacityAssigned
-    capacityAssigned  = models.IntegerField(blank=True, null=True, max_length=200)
+    capacityAssigned  = models.IntegerField(blank=True, null=True)
 
     # Sum of CapacityAssigned
-    capacityIdle  = models.IntegerField(blank=True, null=True, max_length=200)
+    capacityIdle  = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return slugify2(self.fichier.code + '_' + self.resource.code )
-
-
-class SkillResSupport(ProtoModelBase):
-    # Certification, Experience. Etudes
-    resourceSkill = models.ForeignKey('ResourceSkill', blank= True, null= True)
-
-    code  = models.CharField(blank=True, null=True, max_length=200)
-
-    # Cerfication, DEC, BAC, Mandates ( Experience )
-    skillSupType = models.CharField( blank= True, null= True, max_length=50)
- 
-    # accredited experience detail ( temp mandate )
-    skillSupDetail = models.CharField( blank= True, null= True, max_length=50)
-    notes = models.CharField(blank=True, null=True, max_length=500)
-
-    def __str__(self):
-        return slugify2(self.code )
 
 
 
@@ -106,7 +112,17 @@ class Task(ProtoModelBase):
     typeTask = models.CharField( blank= True, null= True, max_length=20 )
 
     # PO : product owner
-    responsable = models.ForeignKey('Resource', blank= True, null= True, related_name='reposable_set')
+    resource = models.ForeignKey(Resource, blank= True, null= True, related_name='reposable_set')
+
+
+    # Sum of ResourceSkill.Capacity  ( in hours, ) 
+    capacityResource  = models.IntegerField(blank=True, null=True)
+
+    # Sum of ResourceSkill.CapacityAssigned
+    capacityAssigned  = models.IntegerField(blank=True, null=True)
+
+    # Sum of ResourceSkill.CapacityAssigned
+    capacityIdle  = models.IntegerField(blank=True, null=True)
 
 
     def __str__(self):
@@ -130,24 +146,24 @@ class Task(ProtoModelBase):
 
 class TaskSkill(ProtoModelBase):
     # skill need
-    task = models.ForeignKey('Task', blank= True, null= True)
-    skill = models.ForeignKey('Skill', blank= True, null= True)
+    task = models.ForeignKey(Task, blank= True, null= True)
+    skill = models.ForeignKey(Skill, blank= True, null= True)
 
 
     # Competent, Expert 
     skillLevel  = models.CharField(blank=True, null=True, max_length=200)
 
     # Total Capacity needed ( hours, ) 
-    capacityNeed  = models.IntegerField(blank=True, null=True, max_length=200)
+    capacityNeed  = models.IntegerField(blank=True, null=True)
 
     # Sum of CapacityAssigned by Task
-    capacityAssigned  = models.IntegerField(blank=True, null=True, max_length=200)
+    capacityAssigned  = models.IntegerField(blank=True, null=True)
 
     # Sum of CapacityIdle
-    capacityAvailable  = models.IntegerField(blank=True, null=True, max_length=200)
+    capacityAvailable  = models.IntegerField(blank=True, null=True)
 
     # capacityNeed - capacityAssigned
-    capacityGap  = models.IntegerField(blank=True, null=True, max_length=200)
+    capacityGap  = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return slugify2(self.fichier.code + '_' + self.resource.code )
@@ -158,14 +174,34 @@ class TaskSkill(ProtoModelBase):
 
 class CapacityAssigned(ProtoModelBase):
     # skill need vs skill Capacity
-    taskSkill = models.ForeignKey('Task', blank= True, null= True)
-    resourceSkill = models.ForeignKey('ResourceSkill', blank= True, null= True)
-
+    taskSkill = models.ForeignKey(TaskSkill, blank= True, null= True)
+    resourceSkill = models.ForeignKey(ResourceSkill, blank= True, null= True)
 
     # Total Capacity assigned ( hours, ) 
-    capacityAssigned  = models.IntegerField(blank=True, null=True, max_length=200)
+    capacityAssigned  = models.IntegerField(blank=True, null=True)
 
 
     def __str__(self):
         return slugify2(self.fichier.code + '_' + self.resource.code )
+
+
+
+# ---------------------------------------------
+
+
+class SkillResSupport(ProtoModelBase):
+    # Certification, Experience. Etudes
+    resourceSkill = models.ForeignKey(ResourceSkill, blank= True, null= True)
+
+    code  = models.CharField(blank=True, null=True, max_length=200)
+
+    # Cerfication, DEC, BAC, Mandates ( Experience )
+    skillSupType = models.CharField( blank= True, null= True, max_length=50)
+ 
+    # accredited experience detail ( temp mandate )
+    skillSupDetail = models.CharField( blank= True, null= True, max_length=50)
+    notes = models.CharField(blank=True, null=True, max_length=500)
+
+    def __str__(self):
+        return slugify2(self.code )
 

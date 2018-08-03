@@ -22,3 +22,6 @@ encoding//prototype/models.py=utf-8
 encoding//rai00base/models.py=utf-8
 encoding//rqEirq/actions.py=utf-8
 encoding//rqEirq/models.py=utf-8
+encoding//rqOrgCapacity/actions.py=utf-8
+encoding//rqOrgCapacity/migrations/0004_auto_20180802_1654.py=utf-8
+encoding//rqOrgCapacity/models.py=utf-8

@@ -1,0 +1,241 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+from django.conf import settings
+import uuid
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('protoLib', '0001_initial'),
+    ]
+
+    operations = [
+        migrations.CreateModel(
+            name='CapacityAssigned',
+            fields=[
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
+                ('smNaturalCode', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smRegStatus', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smWflowStatus', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smCreatedOn', models.DateTimeField(null=True, auto_now_add=True)),
+                ('smModifiedOn', models.DateTimeField(null=True, auto_now=True)),
+                ('smUUID', models.UUIDField(default=uuid.uuid4, editable=False)),
+                ('capacityAssigned', models.IntegerField(max_length=200, blank=True, null=True)),
+            ],
+            options={
+                'permissions': (('list_%(class)', 'Can list available %(class)s'),),
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='Resource',
+            fields=[
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
+                ('smNaturalCode', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smRegStatus', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smWflowStatus', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smCreatedOn', models.DateTimeField(null=True, auto_now_add=True)),
+                ('smModifiedOn', models.DateTimeField(null=True, auto_now=True)),
+                ('smUUID', models.UUIDField(default=uuid.uuid4, editable=False)),
+                ('code', models.CharField(max_length=200, blank=True, null=True)),
+                ('description', models.CharField(max_length=200, blank=True, null=True)),
+                ('typeResource', models.CharField(max_length=20, choices=[('Persona', 'Per'), ('UniteOrg', 'UO')], blank=True, null=True)),
+                ('catResource', models.CharField(max_length=20, blank=True, null=True)),
+                ('email', models.CharField(max_length=200, blank=True, null=True)),
+                ('coordonnees', models.CharField(max_length=200, blank=True, null=True)),
+                ('notes', models.CharField(max_length=200, blank=True, null=True)),
+                ('parent', models.ForeignKey(blank=True, null=True, to='rqOrgCapacity.Resource')),
+                ('smCreatedBy', models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True)),
+                ('smModifiedBy', models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True)),
+                ('smOwningTeam', models.ForeignKey(editable=False, null=True, to='protoLib.TeamHierarchy', related_name='+', blank=True)),
+                ('smOwningUser', models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True)),
+            ],
+            options={
+                'permissions': (('list_%(class)', 'Can list available %(class)s'),),
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='ResourceSkill',
+            fields=[
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
+                ('smNaturalCode', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smRegStatus', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smWflowStatus', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smCreatedOn', models.DateTimeField(null=True, auto_now_add=True)),
+                ('smModifiedOn', models.DateTimeField(null=True, auto_now=True)),
+                ('smUUID', models.UUIDField(default=uuid.uuid4, editable=False)),
+                ('skillLevel', models.CharField(max_length=200, blank=True, null=True)),
+                ('capacityResource', models.IntegerField(max_length=200, blank=True, null=True)),
+                ('capacityAssigned', models.IntegerField(max_length=200, blank=True, null=True)),
+                ('capacityIdle', models.IntegerField(max_length=200, blank=True, null=True)),
+                ('resource', models.ForeignKey(blank=True, null=True, to='rqOrgCapacity.Resource')),
+            ],
+            options={
+                'permissions': (('list_%(class)', 'Can list available %(class)s'),),
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='Skill',
+            fields=[
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
+                ('smNaturalCode', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smRegStatus', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smWflowStatus', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smCreatedOn', models.DateTimeField(null=True, auto_now_add=True)),
+                ('smModifiedOn', models.DateTimeField(null=True, auto_now=True)),
+                ('smUUID', models.UUIDField(default=uuid.uuid4, editable=False)),
+                ('code', models.CharField(max_length=200, blank=True, null=True)),
+                ('label', models.CharField(max_length=200, blank=True, null=True)),
+                ('description', models.CharField(max_length=500, blank=True, null=True)),
+                ('skillType', models.CharField(max_length=20, blank=True, null=True)),
+                ('smCreatedBy', models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True)),
+                ('smModifiedBy', models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True)),
+                ('smOwningTeam', models.ForeignKey(editable=False, null=True, to='protoLib.TeamHierarchy', related_name='+', blank=True)),
+                ('smOwningUser', models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True)),
+            ],
+            options={
+                'permissions': (('list_%(class)', 'Can list available %(class)s'),),
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='SkillResSupport',
+            fields=[
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
+                ('smNaturalCode', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smRegStatus', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smWflowStatus', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smCreatedOn', models.DateTimeField(null=True, auto_now_add=True)),
+                ('smModifiedOn', models.DateTimeField(null=True, auto_now=True)),
+                ('smUUID', models.UUIDField(default=uuid.uuid4, editable=False)),
+                ('code', models.CharField(max_length=200, blank=True, null=True)),
+                ('skillSupType', models.CharField(max_length=50, blank=True, null=True)),
+                ('skillSupDetail', models.CharField(max_length=50, blank=True, null=True)),
+                ('notes', models.CharField(max_length=500, blank=True, null=True)),
+                ('resourceSkill', models.ForeignKey(blank=True, null=True, to='rqOrgCapacity.ResourceSkill')),
+                ('smCreatedBy', models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True)),
+                ('smModifiedBy', models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True)),
+                ('smOwningTeam', models.ForeignKey(editable=False, null=True, to='protoLib.TeamHierarchy', related_name='+', blank=True)),
+                ('smOwningUser', models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True)),
+            ],
+            options={
+                'permissions': (('list_%(class)', 'Can list available %(class)s'),),
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='Task',
+            fields=[
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
+                ('smNaturalCode', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smRegStatus', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smWflowStatus', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smCreatedOn', models.DateTimeField(null=True, auto_now_add=True)),
+                ('smModifiedOn', models.DateTimeField(null=True, auto_now=True)),
+                ('smUUID', models.UUIDField(default=uuid.uuid4, editable=False)),
+                ('code', models.CharField(max_length=200, blank=True, null=True)),
+                ('label', models.CharField(max_length=200, blank=True, null=True)),
+                ('description', models.CharField(max_length=500, blank=True, null=True)),
+                ('notes', models.CharField(max_length=500, blank=True, null=True)),
+                ('urlDoc', models.CharField(max_length=500, blank=True, null=True)),
+                ('typeTask', models.CharField(max_length=20, blank=True, null=True)),
+                ('responsable', models.ForeignKey(blank=True, null=True, to='rqOrgCapacity.Resource', related_name='reposable_set')),
+                ('smCreatedBy', models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True)),
+                ('smModifiedBy', models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True)),
+                ('smOwningTeam', models.ForeignKey(editable=False, null=True, to='protoLib.TeamHierarchy', related_name='+', blank=True)),
+                ('smOwningUser', models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True)),
+            ],
+            options={
+                'permissions': (('list_%(class)', 'Can list available %(class)s'),),
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='TaskSkill',
+            fields=[
+                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
+                ('smNaturalCode', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smRegStatus', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smWflowStatus', models.CharField(max_length=50, editable=False, null=True, blank=True)),
+                ('smCreatedOn', models.DateTimeField(null=True, auto_now_add=True)),
+                ('smModifiedOn', models.DateTimeField(null=True, auto_now=True)),
+                ('smUUID', models.UUIDField(default=uuid.uuid4, editable=False)),
+                ('skillLevel', models.CharField(max_length=200, blank=True, null=True)),
+                ('capacityNeed', models.IntegerField(max_length=200, blank=True, null=True)),
+                ('capacityAssigned', models.IntegerField(max_length=200, blank=True, null=True)),
+                ('capacityAvailable', models.IntegerField(max_length=200, blank=True, null=True)),
+                ('capacityGap', models.IntegerField(max_length=200, blank=True, null=True)),
+                ('skill', models.ForeignKey(blank=True, null=True, to='rqOrgCapacity.Skill')),
+                ('smCreatedBy', models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True)),
+                ('smModifiedBy', models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True)),
+                ('smOwningTeam', models.ForeignKey(editable=False, null=True, to='protoLib.TeamHierarchy', related_name='+', blank=True)),
+                ('smOwningUser', models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True)),
+                ('task', models.ForeignKey(blank=True, null=True, to='rqOrgCapacity.Task')),
+            ],
+            options={
+                'permissions': (('list_%(class)', 'Can list available %(class)s'),),
+                'abstract': False,
+            },
+        ),
+        migrations.AddField(
+            model_name='resourceskill',
+            name='skill',
+            field=models.ForeignKey(blank=True, null=True, to='rqOrgCapacity.Skill'),
+        ),
+        migrations.AddField(
+            model_name='resourceskill',
+            name='smCreatedBy',
+            field=models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True),
+        ),
+        migrations.AddField(
+            model_name='resourceskill',
+            name='smModifiedBy',
+            field=models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True),
+        ),
+        migrations.AddField(
+            model_name='resourceskill',
+            name='smOwningTeam',
+            field=models.ForeignKey(editable=False, null=True, to='protoLib.TeamHierarchy', related_name='+', blank=True),
+        ),
+        migrations.AddField(
+            model_name='resourceskill',
+            name='smOwningUser',
+            field=models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True),
+        ),
+        migrations.AddField(
+            model_name='capacityassigned',
+            name='resourceSkill',
+            field=models.ForeignKey(blank=True, null=True, to='rqOrgCapacity.ResourceSkill'),
+        ),
+        migrations.AddField(
+            model_name='capacityassigned',
+            name='smCreatedBy',
+            field=models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True),
+        ),
+        migrations.AddField(
+            model_name='capacityassigned',
+            name='smModifiedBy',
+            field=models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True),
+        ),
+        migrations.AddField(
+            model_name='capacityassigned',
+            name='smOwningTeam',
+            field=models.ForeignKey(editable=False, null=True, to='protoLib.TeamHierarchy', related_name='+', blank=True),
+        ),
+        migrations.AddField(
+            model_name='capacityassigned',
+            name='smOwningUser',
+            field=models.ForeignKey(editable=False, null=True, to=settings.AUTH_USER_MODEL, related_name='+', blank=True),
+        ),
+        migrations.AddField(
+            model_name='capacityassigned',
+            name='taskSkill',
+            field=models.ForeignKey(blank=True, null=True, to='rqOrgCapacity.Task'),
+        ),
+    ]

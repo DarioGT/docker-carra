@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'rai01ref', 
     'rqEirq', 
     'protoGraph', 
+    'rqOrgCapacity', 
 
     # 'import_export',     : deprecate warning importlib 
     # 'reversion',
