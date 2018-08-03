@@ -5,3 +5,5 @@
 */db/*.tar.gz
 */output/*
 /__pycache__
+/src/db/OrgCapacity.db
+/src/db/170802 OrgCapacity.sql
