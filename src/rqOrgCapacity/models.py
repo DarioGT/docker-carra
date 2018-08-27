@@ -93,7 +93,7 @@ class ResourceSkill(ProtoModelBase):
     capacityIdle  = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
-        return slugify2(self.fichier.code + '_' + self.resource.code )
+        return slugify2(self.skill.code + '_' + self.resource.code )
 
 
 
@@ -166,7 +166,7 @@ class TaskSkill(ProtoModelBase):
     capacityGap  = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
-        return slugify2(self.fichier.code + '_' + self.resource.code )
+        return slugify2(self.task.code + '_' + self.skill.code )
 
 
 # ---------------------------------------------------
@@ -182,7 +182,7 @@ class CapacityAssigned(ProtoModelBase):
 
 
     def __str__(self):
-        return slugify2(self.fichier.code + '_' + self.resource.code )
+        return slugify2(self.taskSkill + '_' + self.resourceSkill.code )
 
 
 
@@ -190,10 +190,10 @@ class CapacityAssigned(ProtoModelBase):
 
 
 class SkillResSupport(ProtoModelBase):
+    code  = models.CharField(blank=True, null=True, max_length=200)
+
     # Certification, Experience. Etudes
     resourceSkill = models.ForeignKey(ResourceSkill, blank= True, null= True)
-
-    code  = models.CharField(blank=True, null=True, max_length=200)
 
     # Cerfication, DEC, BAC, Mandates ( Experience )
     skillSupType = models.CharField( blank= True, null= True, max_length=50)

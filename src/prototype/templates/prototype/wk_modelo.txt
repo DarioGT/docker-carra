@@ -1,0 +1,40 @@
+{% load prototags %}
+{% block content %}
+======= Model : {{ property.code|capfirst }} =======
+{{ property.description|default:".. description" }}
+
+
+====== Hierarchy ( Zooms ) ======
+
+^Attribute ^Description ^
+[[{{ fullname|parentpath:"2" }}|{{ property.entity.code }}]]
+
+
+
+====== Properties ======
+
+^Attribute ^Description ^
+|code |{{ property.code }} |
+|baseType |{{ property.baseType }} |
+|prpLength |{{ property.prpLength }} |
+|prpScale |{{ property.prpScale }} |
+|prpDefault |{{ property.prpDefault }} |
+|isNullable |{{ property.isNullable }} |
+|isRequired |{{ property.isRequired }} |
+|isReadOnly |{{ property.isReadOnly }} |
+|isForeign |{{ property.isForeign }} |
+
+
+====== Master Details  ======
+
+^Models ^Description ^
+{% for model in project.model_set.all %}
+	|[[prototype:model:{{ model.code|slugify }}|{{ model.code }}]] 
+	|{{ model.description }}
+	|
+{% endfor %}
+
+
+{% endblock %}
+
+

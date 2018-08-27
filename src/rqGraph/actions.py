@@ -3,11 +3,15 @@
 import json
 from django.forms.models import model_to_dict
 from protoExt.utils.downloadFile import getCustomPath
+from rqGraph.models import NodeStyle, EdgeStyle, Cluster, Canvas, CanvasDetail,\
+    ClusterNodes, Edge
+ 
 
 
 VersionSoftBPM = "0.0.1-2018-07-31"
 nLn = '\l' # New Line 
 
+graphSettings = {}
 GVDescription = ""
 clusterStucture = {}
 
@@ -28,17 +32,17 @@ def CreateSoftBPM( canvasId ):
 
     #Start the Graph
     GVDescription = "//graphviz file generated with SoftBPM " + VersionSoftBPM + nLn
-    GVDescription = GVDescription + "digraph \""  + graphSettings[ graphName ] + "\"{" + nLn
+    GVDescription = GVDescription + "digraph \""  + graphSettings[ 'graphName' ] + "\"{" + nLn
 
 
     #Cluster Hierarchy
-    for canvas in CanvasDetail.objects.filter( canvas_id = canvasId ): 
+    for cluster in CanvasDetail.objects.filter( canvas_id = canvasId ): 
         clusterDict = model_to_dict(cluster) 
-        clusterDict['clusters_set'] = getClusterHierarchy( clusterDict] )
+        clusterDict['clusters_set'] = getClusterHierarchy( clusterDict )
         clusterDict['nodes_set'] = getClusterNodes( clusterDict['id'] )
 
         clusterStucture[ cluster['code'] ] = clusterDict
-        clusterAll[ cluster['code'] ] = clusterDict
+        clustersAll[ cluster['code'] ] = clusterDict
     
     #Styles 
     getStyles()
@@ -99,22 +103,24 @@ def getStyles():
   
   
     # Styles Get 
-    for node in NodeStyle.objects.filter( pk__in=nodeStyleSet) :
-        nodeStyleCll[ node['code'] ) = model_to_dict( node ) 
+    for node in NodeStyle.objects.filter( pk__in=nodeStyleSet):
+        nodeStyleCll[ node['code']] = model_to_dict( node ) 
 
     for edge in EdgeStyle.objects.filter( pk__in=edgeStyleSet) :
-        edgeStyleCll[ node['code'] ) = model_to_dict( edge ) 
+        edgeStyleCll[ node['code']]  = model_to_dict( edge ) 
       
 
 def getClusterStyle( cluster ):
 
-    GVDescription = GVDescription + "tooltip= """ + cluster['description'] + """;" + nLn
+    GVDescription = GVDescription + "tooltip= """ + cluster['description'] + "\";" + nLn
 
-    If Not graphSettings.Item("clusterLabelAsNode") Then
-        GVDescription = GVDescription + "label= """ + cluster['name'] + """;" + nLn
-    Else
-        GVDescription = GVDescription + "label= """";" + nLn
-        GVDescription = GVDescription + """" + cluster['name'] + """" + "    [" + styleTypeItem.Value + "label= """ + splitLabels(cluster[''].Name, False, graphSettings.Item("preferredSplitPosition")) + """,style="""", shape=""plaintext""];" + nLn + nLn
+    if not graphSettings.Item("clusterLabelAsNode"):
+        GVDescription = GVDescription + "label= """ + cluster['name'] + "\";" + nLn
+    else:
+        GVDescription = GVDescription + "label= \";" + nLn
+        GVDescription = GVDescription + "\"" + cluster['name'] + "\"" 
+        GVDescription = GVDescription + " [" + styleTypeItem.Value + "label= """ + cluster['Name'] + "\","
+        GVDescription = GVDescription + "style= \", shape=""plaintext""];" + nLn + nLn
     
     GVDescription = GVDescription + "style = invis;" + nLn
 
@@ -150,7 +156,7 @@ def getEdgeStyle( edge ):
 
 def generateGV( cluster ):
 
-    GVDescription = GVDescription + "subgraph ""cluster_" + cluster['code'] + """ {" + nLn
+    GVDescription = GVDescription + "subgraph \"cluster_" + cluster['code'] + "\" {" + nLn
     GVDescription = GVDescription + getClusterStyle( cluster )
 
     GVDescription = GVDescription + nLn
@@ -177,13 +183,13 @@ def generateEdge( edge ):
         
         
         
-        'Ranks
+        # Ranks
         GVDescription = GVDescription + nLn
         For Each Rank In cluster[''].Ranks
             RankGroup = "{ rank=" + Rank + " "
             For Each clusterNode In clusterNodes
-                If clusterNode.Rank = Rank Then
-                    RankGroup = RankGroup + """" + clusterNode.ID + """ "
+                If clusterNode.Rank = Rank:
+                    RankGroup = RankGroup + "\"" + clusterNode.ID + "\" "
                 
                 
 

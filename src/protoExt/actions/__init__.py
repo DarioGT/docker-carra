@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from protoExt.utils.utilsBase import getReadableError, traceError
+from protoExt.actions.doWikiTempl import doWikiTemplate
 
 
 def doSetContext(modeladmin, request, queryset, parameters):
@@ -80,4 +81,28 @@ def doFindReplace(modeladmin, request, queryset, parameters):
 
     from protoLib.actions.findReplace import actionFindReplace
     return actionFindReplace(request, queryset, parameters)
+
+
+
+
+
+def doGeneraWikiTemplate(modeladmin, request, queryset, parameters):
+    """ 
+    Genera un Wiki Temmplate a partir de ViewDefinition 
+
+    """
+
+#   QSet User selection registers ( Ids ) 
+    if queryset.count() < 1:
+        return  {'success':False, 'message' : 'Multiple selection required'}
+
+
+    try:
+        result = doWikiTemplate(request, queryset, parameters)
+
+    except Exception as e:
+        traceError()
+        result = {'success':False, 'message' : getReadableError(e) }
+
+    return result
 

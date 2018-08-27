@@ -4,13 +4,11 @@
 
 ====== Entities ======
 ^Entity ^Description ^
-{% for entity in model.entity_set.all %}|[[{{ fullname }}:{{ entity.code|slugify }}|{{ entity.code }}]] |{{ entity.description|wikisafe }} |
+{% for entity in model.entity_set.all %}|{{ entity.wkFullPageName }}|{{ entity.description|default:".. description" }} |
 {% endfor %}
 
 ====== Hierarchy ======
 
-<diagram>
-|Projet            |Projet=[[{{ fullname|parentpath:"2" }}|{{ model.project.code }}]]
-</diagram>
+Projet : {{ model.project.wkFullPageName }}
 
 {% endblock %}

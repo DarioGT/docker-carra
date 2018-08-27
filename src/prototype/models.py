@@ -154,6 +154,8 @@ class Project(ProtoModelExt):
         }],
         "actions": [
             {"name": "doImportSchema", "selectionMode": "single"},
+            {"name": "doExportWiki", "selectionMode": "multiple"},
+
             #             { "name": "doImportOMS", "selectionMode" : "single",
             #               "actionParams": [
             #                  {"name" : "fileName", "type" : "string", "required": False, "tooltip" : "option de menu (msi)" }

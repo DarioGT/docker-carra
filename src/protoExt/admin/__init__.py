@@ -5,23 +5,28 @@ from django.contrib  import admin
 # import reversion
 
 from protoExt.models import ViewDefinition, CustomDefinition
+from protoExt.actions import doSetContext, doGeneraWikiTemplate
 
 
-admin.site.register(ViewDefinition)
+class ViewDefinitionAdmin( admin.ModelAdmin ):
+    actions = [ doGeneraWikiTemplate  ]
+
+admin.site.register(ViewDefinition, ViewDefinitionAdmin )
+# patch_admin(Entity)
+
+
 admin.site.register(CustomDefinition)
 
 # patch_admin(ViewDefinition)
 # patch_admin(CustomDefinition)
 
 
-
-from protoExt.actions import doSetContext
 admin.site.add_action(doSetContext)
 
 
 # -----------------------------------------   AddUser  
 
-from protoExt.actions import doAddUser, doAddUsers 
+from protoExt.actions import doAddUser, doAddUsers, doGeneraWikiTemplate
 from protoLib.models import UserProfile
 
 class UserProfileAdmin( admin.ModelAdmin ):
@@ -57,3 +62,5 @@ except:
     pass 
 
 admin.site.register( UserProfile, UserProfileAdmin )
+
+

@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'rqEirq', 
     'protoGraph', 
     'rqOrgCapacity', 
+    'rqGraph', 
 
     # 'import_export',     : deprecate warning importlib 
     # 'reversion',

@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+# tags template fonctions 
+
 from django.template.base import Library, Node, TemplateSyntaxError
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
@@ -48,6 +51,7 @@ def wikisafe(value):
     """
     return mark_safe( value.replace('\n', '\\\\ ') )
 
+
 class NewvarNode(Node):
     def __init__(self, impvars, asvar=None):
         self.impvars = impvars
@@ -72,4 +76,12 @@ def parentpath(value, arg):
     lvalues = value.split(':')[0:ix]
     return ':'.join( lvalues)
 
+
+
+@register.filter(is_safe=True)
+@stringfilter
+def getnamespace(arg):
+    """Retorna el paren path q se pida"""
+    lvalues = str( arg )
+    return ':'.join( lvalues)
 

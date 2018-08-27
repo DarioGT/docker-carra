@@ -11,6 +11,8 @@ from protoLib.getStuff import getUserTeam
 from .protomanager import TeamPermissionManager, ProtoJSONManager
 
 import uuid 
+from protoExt.utils.utilsFile import joinPath
+from protoExt.utils.utilsConvert import slugify2
 
 
 smControlFields = [
@@ -101,6 +103,30 @@ class ProtoModelExt(ProtoModelBase):
     class Meta:
         abstract = True
 
+
+
+    @property
+    def wkFilePath(self):
+        #  app/model 
+        return  joinPath( self._meta.app_label , self._meta.verbose_name.title() ).lower() 
+
+
+    @property
+    def wkPage(self):
+        # str-id  (  code-0001  )
+        sAux = self.__str__()
+        if len( sAux ) > 16: sAux = sAux[:16]  
+        
+        return slugify2( self.__str__()  + '-{:08d}'.format( self.id ) ) 
+
+
+
+    @property
+    def wkFullPageName(self):
+        #  :app:model:page | __str__
+        sAux = joinPath( self.wkFilePath , self.wkPage ) 
+        sAux = '[[:' + sAux.replace('/', ':').replace('\\', ':') + '|' + self.__str__() + ']]'
+        return  sAux 
 
 
 def setSecurityInfo(dEntity, data, user_profile, ins):

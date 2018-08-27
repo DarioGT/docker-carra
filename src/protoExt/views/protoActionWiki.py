@@ -17,9 +17,34 @@ from protoLib.getStuff import cAux
 from protoExt.utils.utilsConvert import slugify2
 
 
+def doExportWiki( modeladmin, request, queryset, parameters):
+
+
+#   El QSet viene con la lista de Ids  
+    if queryset.count() != 1:
+        return  {'success':False, 'message' : 'No record selected' }
+
+    try: 
+        pass
+#        Do no delete 
+#        from multiprocessing import Process
+#        p = Process (target= getDbSchemaDef ,args=( queryset[0] , request ))
+#        p.start()
+    
+#   Recorre los registros selccionados   
+    except:
+        traceError()
+        return  {'success':False, 'message' : 'Load error' }
+        pass
+        
+    return {'success':True, 'message' :  'runing ...' } 
+
+
+
+
 def protoWiki(request):
     """ 
-    export wiki  
+    exportWiki  
 
     input:  opcion, template,  Qs ( list of  ids )
 
@@ -65,59 +90,30 @@ def protoWiki(request):
 
     return JsonSuccess()
 
+    
 
 def _doWikiFile(cBase, cRep,  reg ):
     """
-    nameSpace     prefix, Field ; prefix, Field  
+    nameSpace     App.Model 
     pageExpr      prefix, Field
     """
-    
-    myPath = cRep.wikiPath
-    cRep.nSpace = ''
-    
-    # Obtiene los diferentes pedazos del path      
-    for relPath in cRep.nSpaceExpr.replace(' ', '').split( ';' ):
-        if len( relPath ) == 0: continue 
-        preFix = _getRelNameSpace( relPath, reg  )
-        
-        cRep.nSpace = _joinNSpace( cRep.nSpace, preFix  )
-        myPath  = joinPath( myPath, preFix  )
-        
-    # Verifica el path              
+ 
+    myPath  = joinPath( cRep.wikiPath, reg.wkFilePath ) 
+
+    # Verify path              
     filePath = verifyDirPath( myPath )
     if not filePath: return JsonError('invalid path : %s' % myPath )
+    filePath = joinPath( filePath , reg.wkPage ) + '.txt'
 
-    #     
-    fileName = _getRelNameSpace( cRep.pageExpr , reg )
-    cRep.fullName = _joinNSpace( cRep.nSpace, fileName  )
- 
-    filePath = joinPath( filePath, fileName + '.txt' )
 
     # Carga el template   
     t = loader.get_template( cRep.template )
     wFile = t.render(Context({ 
           cRep.regName : reg, 
-          'nspace' : cRep.nSpace,  
-          'fullname' : cRep.fullName,
           }))
 
     WriteFile(filePath, wFile, 'w')
 
-
-def _joinNSpace(nSpace, preFix):
-    if nSpace: nSpace += ':'  
-    return nSpace + preFix 
-
-
-def _getRelNameSpace( relPath, reg ):
-    """ 
-    Construye el relPath basado en un prefijo y el vr de un Field
-    """
-    preFix, preVar =  relPath.replace(' ','').split( ',' )
-    if len( preVar ):
-        preVar = preVar.replace( '__', '.')
-        preVar = slugify2( eval( '%s.%s' % ( 'reg',  preVar )))  
-    return slugify2( preFix + preVar ) 
 
 
 def _getSheetConf(cBase, cRep):

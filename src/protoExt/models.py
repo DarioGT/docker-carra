@@ -49,7 +49,11 @@ class ViewDefinition(models.Model):
     protoExt = {
         "gridConfig" : {
             "listDisplay": ["__str__", "description", "active", "overWrite"],
-        }
+        }, 
+        "actions": [
+            {"name": "doWikiTemplate", "selectionMode": "multiple"},
+        ],
+        
     }
 
 
@@ -80,7 +84,7 @@ class CustomDefinition(ProtoModelBase):
     protoExt = {
         "gridConfig" : {
             "listDisplay": ["__str__", "description", "smOwningUser"]
-        }
+        }, 
     }
 
 

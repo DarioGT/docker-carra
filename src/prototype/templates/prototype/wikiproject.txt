@@ -1,12 +1,15 @@
-{% load pydev_debug %} {% block content %}
+{% load pydev_debug %} 
+{% block content %}
 ======= Project : {{ project.code|capfirst }} =======
 {{ project.description|default:".. description" }}
 
 ====== Models ======
 ^Models ^Description ^
-{% for model in project.model_set.all %}|[[{{ fullname }}:{{ model.code|slugify }}|{{ model.code }}]] |{{ model.description }} |
+{% for model in project.model_set.all %}|{{ model.wkFullPageName }}|{{ model.description|default:".. description" }} |
 {% endfor %}
 
 ====== Diagrams ======
 ... 
 {% endblock %}
+
+
