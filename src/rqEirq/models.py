@@ -39,7 +39,7 @@ class Source(ProtoModelBase):
 
     typeSource = models.CharField( blank= True, null= True, max_length=20, choices=TYPESOURCE_CHOICES )
 
-    responsable = models.ForeignKey('Responsable', blank= True, null= True, related_name='reposable_set')
+    responsable = models.ForeignKey('Responsable', blank= True, null= True, related_name='responsable_set')
     pilote = models.ForeignKey('Responsable', blank= True, null= True, related_name='pilote_set')
 
     def __str__(self):

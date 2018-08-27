@@ -1,0 +1,45 @@
+{% load prototags %}{% block content %}
+======= Relationship : {{ relationship.str |capfirst }} =======
+
+^Property ^Value ^
+|dbName |{{ relationship.dbName }}|
+|code |{{ relationship.code }}|
+|refMin |{{ relationship.refMin }}|
+|baseMax |{{ relationship.baseMax }}|
+|description |{{ relationship.description }}|
+|onRefDelete |{{ relationship.onRefDelete }}|
+|Relationship |{{ relationship }}|
+|isEssential |{{ relationship.isEssential }}|
+|property ptr |{{ relationship.property_ptr }}|
+|vType |{{ relationship.vType }}|
+|isPrimary |{{ relationship.isPrimary }}|
+|isLookUpResult |{{ relationship.isLookUpResult }}|
+|baseMin |{{ relationship.baseMin }}|
+|isNullable |{{ relationship.isNullable }}|
+|isReadOnly |{{ relationship.isReadOnly }}|
+|crudType |{{ relationship.crudType }}|
+|isForeign |{{ relationship.isForeign }}|
+|notes |{{ relationship.notes }}|
+|isRequired |{{ relationship.isRequired }}|
+|typeRelation |{{ relationship.typeRelation }}|
+|isSensitive |{{ relationship.isSensitive }}|
+|prpScale |{{ relationship.prpScale }}|
+|relatedName |{{ relationship.relatedName }}|
+|refMax |{{ relationship.refMax }}|
+
+====== References ======
+^Zooms ^Value^ 
+|entity |{{ relationship.entity.wkFullPageName }}|
+|refEntity |{{ relationship.refEntity.wkFullPageName }}|
+
+====== Details ======
+
+^Propertyequivalence.sourceProperty^
+{% for det in relationship.propertyequivalence_set.all %}|{{ det.wkFullPageName }}|
+{% endfor %}
+
+^Propertyequivalence.targetProperty^
+{% for det in relationship.propertyequivalence_set.all %}|{{ det.wkFullPageName }}|
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% load prototags %}{% block content %}
+======= Proto Table : {{ prototable.str |capfirst }} =======
+
+^Property ^Value ^
+|info |{{ prototable.info }}|
+|Proto Table |{{ prototable }}|
+
+====== References ======
+^Zooms ^Value^ 
+|entity |{{ prototable.entity.wkFullPageName }}|
+
+====== Details ======
+
+{% endblock %}

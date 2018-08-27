@@ -1,29 +1,40 @@
-{% load prototags %}
-{% block content %}
-======= Model : {{ property.code|capfirst }} =======
-{{ property.description|default:".. description" }}
+{% load prototags %}{% block content %}
+======= Property : {{ property.str |capfirst }} =======
 
-====== Properties ======
-^Attribute ^Description ^
-|code |{{ property.code }} |
-|baseType |{{ property.baseType }} |
-|prpLength |{{ property.prpLength }} |
-|prpScale |{{ property.prpScale }} |
-|prpDefault |{{ property.prpDefault }} |
-|isNullable |{{ property.isNullable }} |
-|isRequired |{{ property.isRequired }} |
-|isReadOnly |{{ property.isReadOnly }} |
-|isForeign |{{ property.isForeign }} |
+^Property ^Value ^
+|dbName |{{ property.dbName }}|
+|code |{{ property.code }}|
+|description |{{ property.description }}|
+|isReadOnly |{{ property.isReadOnly }}|
+|Property |{{ property }}|
+|isEssential |{{ property.isEssential }}|
+|notes |{{ property.notes }}|
+|vType |{{ property.vType }}|
+|prpDefault |{{ property.prpDefault }}|
+|prpLength |{{ property.prpLength }}|
+|isSensitive |{{ property.isSensitive }}|
+|isNullable |{{ property.isNullable }}|
+|isLookUpResult |{{ property.isLookUpResult }}|
+|crudType |{{ property.crudType }}|
+|isForeign |{{ property.isForeign }}|
+|isRequired |{{ property.isRequired }}|
+|baseType |{{ property.baseType }}|
+|prpScale |{{ property.prpScale }}|
+|prpChoices |{{ property.prpChoices }}|
+|isPrimary |{{ property.isPrimary }}|
 
+====== References ======
+^Zooms ^Value^ 
+|entity |{{ property.entity.wkFullPageName }}|
 
-====== Hierarchy ======
+====== Details ======
 
-<diagram>
-|Projet            |Projet=[[{{ fullname|parentpath:"2" }}|{{ property.entity.model.project.code }}]]
-| |!|
-| |`|Model         |Model=[[{{ fullname|parentpath:"3" }}|{{ property.entity.model.code }}]]
-| | | |!|
-| | | |`|Entity    |Entity=[[{{ fullname|parentpath:"4" }}|{{ property.entity.code }}]]
-</diagram>
+^Propertyequivalence.sourceProperty^
+{% for det in property.propertyequivalence_set.all %}|{{ det.wkFullPageName }}|
+{% endfor %}
+
+^Propertyequivalence.targetProperty^
+{% for det in property.propertyequivalence_set.all %}|{{ det.wkFullPageName }}|
+{% endfor %}
 
 {% endblock %}

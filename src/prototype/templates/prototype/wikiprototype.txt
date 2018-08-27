@@ -1,0 +1,17 @@
+{% load prototags %}{% block content %}
+======= Prototype : {{ prototype.str |capfirst }} =======
+
+^Property ^Value ^
+|code |{{ prototype.code }}|
+|notes |{{ prototype.notes }}|
+|metaDefinition |{{ prototype.metaDefinition }}|
+|description |{{ prototype.description }}|
+|Prototype |{{ prototype }}|
+
+====== References ======
+^Zooms ^Value^ 
+|entity |{{ prototype.entity.wkFullPageName }}|
+
+====== Details ======
+
+{% endblock %}

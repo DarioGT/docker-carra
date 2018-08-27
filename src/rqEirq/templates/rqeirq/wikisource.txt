@@ -1,0 +1,28 @@
+{% load prototags %}{% block content %}
+======= Source : {{ source.str |capfirst }} =======
+
+^Property ^Value ^
+|Source |{{ source }}|
+|code |{{ source.code }}|
+|notes |{{ source.notes }}|
+|description |{{ source.description }}|
+|urlDoc |{{ source.urlDoc }}|
+|typeSource |{{ source.typeSource }}|
+|label |{{ source.label }}|
+
+====== References ======
+^Zooms ^Value^ 
+|responsable |{{ source.responsable.wkFullPageName }}|
+|pilote |{{ source.pilote.wkFullPageName }}|
+
+====== Details ======
+
+^Fichier.source^
+{% for det in source.fichier_set.all %}|{{ det.wkFullPageName }}|
+{% endfor %}
+
+^Dependance.produit^
+{% for det in source.dependance_set.all %}|{{ det.wkFullPageName }}|
+{% endfor %}
+
+{% endblock %}

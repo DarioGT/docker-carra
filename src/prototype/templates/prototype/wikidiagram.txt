@@ -1,0 +1,28 @@
+{% load prototags %}{% block content %}
+======= Diagram : {{ diagram.str |capfirst }} =======
+
+^Property ^Value ^
+|code |{{ diagram.code }}|
+|showBorder |{{ diagram.showBorder }}|
+|title |{{ diagram.title }}|
+|description |{{ diagram.description }}|
+|showFKey |{{ diagram.showFKey }}|
+|Diagram |{{ diagram }}|
+|prefix |{{ diagram.prefix }}|
+|grphMode |{{ diagram.grphMode }}|
+|graphForm |{{ diagram.graphForm }}|
+|notes |{{ diagram.notes }}|
+|showPrpType |{{ diagram.showPrpType }}|
+|graphLevel |{{ diagram.graphLevel }}|
+
+====== References ======
+^Zooms ^Value^ 
+|project |{{ diagram.project.wkFullPageName }}|
+
+====== Details ======
+
+^Diagramentity.diagram^
+{% for det in diagram.diagramentity_set.all %}|{{ det.wkFullPageName }}|
+{% endfor %}
+
+{% endblock %}

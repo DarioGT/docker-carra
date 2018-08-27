@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-
-
   
 from protoExt.utils.utilsConvert import slugify2
-
-
+from protoExt.views.protoField import isAdmField
+import os
+from protoExt.utils.utilsFile import verifyDirPath
 
 
 def doWikiTemplate(request, queryset, parameters):
@@ -13,89 +12,86 @@ def doWikiTemplate(request, queryset, parameters):
     # Loop 
     for dView in queryset:
 
-        protoMeta = doWikiFile( dView.metaDefinition ) 
-        
+        doWikiFile( dView.metaDefinition ) 
 
 
 
 def doWikiFile( protoMeta ):
-
-
-    # 
+    # Prepare DokuWiki default template  
 
     lFields = []
     lZooms =  []
 
-    viewEntity = protoMeta['viewEntity']
-    lApp, lEntity =  viewEntity.lower().split('.')
+    lApp, lEntity =  protoMeta['viewEntity'].lower().split('.')
 
 
     for lField in protoMeta['fields']:
-        fName = lField['name']
-        if isAdmField( fName ): continue
+        if isAdmField( lField['name'] ): continue
+        if lField['type'] == 'foreignid': continue
 
-        myZoomModel = lField.get('zoomModel', '')
-        if (len(myZoomModel) > 0) :
-            zooms.append(  lField )
+        if lField['type'] == 'foreigntext' :
+            lZooms.append(  lField )
         else: 
-            fields.append(  lField )
+            lFields.append(  lField )
 
 
-    sAux  = "{% load prototags %}\n"
-    sAux += "{% block content %}\n\n"
+    sAux  = "{% load prototags %}{% block content %}\n"
 
-    sAux += "======= {0} : {{ {1}.__str__ |capfirst }} =======\n\n".format( protoMeta['shortTitle'], lEntity )
+    sAux += "======= {0} : $a {1}.str |capfirst $b =======\n\n".format( protoMeta['shortTitle'], lEntity )
     sAux += "^Property ^Value ^\n"
 
     for lField in lFields:
+        fName = lField['name']
+        lHeader = lField.get( 'header', fName ) 
+        if  fName == '__str__' : 
+            fName = lEntity
+        else: 
+            fName = lEntity + '.' + fName
 
-        sAux += "|{0} |{{ {1}.{2} }}|\n".format( lField['header'], lEntity, lField['name'] )
+        sAux += "|{0} |$a {1} $b|\n".format( lHeader, fName )
 
-    sAux += "====== References ======\n\n"
-    sAux += "^Property ^Value ^\n"
+
+    sAux += "\n====== References ======\n"
+    sAux += "^Zooms ^Value^ \n"
 
     for lField in lZooms:
+        fName = lField['name']
+        lHeader = lField.get( 'header', fName ) 
+        sAux += "|{0} |$a {1}.{2}.wkFullPageName $b|\n".format( lHeader , lEntity, fName )
 
-        sAux += "|{0} |{{ {1}.{2}.wkFullPageName }}|\n".format( lField['header'], lEntity, lField['name'] )
+
+    sAux += "\n====== Details ======\n\n"
 
 
     for lDet in protoMeta['detailsConfig']:
-        lDetName = lDet['conceptDetail'].split('.')[1] 
 
-        sAux += "====== {0} ======\n".format( lDet['menuText'] )
-        sAux += "^{0}^\n".format()
-        sAux += "{% for entity in project.model_set.all %}|{{ entity.wkFullPageName }}|{{ entity.description|default:\".. description\" }} |\n"
-        sAux += "{% endfor %}\n"
+        lDetName = lDet['detailName'].split('.')[1].lower()
+
+        sAux += "^{0}^\n".format( lDet['menuText'] )
+        sAux += "{% " + "for det in {0}.{1}_set.all".format( lEntity, lDetName ) + " %}" 
+        sAux += "|$a det.wkFullPageName $b|\n"
+        sAux += "{% endfor %}\n\n"
 
     sAux += "{% endblock %}"
 
 
-    return sAux  
+
+    sAux = sAux.replace( '$a', '{{').replace('$b', '}}')
 
 
+    # File 
+    from django.conf import settings
 
-    for lField in cBase.protoMeta['fields']:
-        fName = lField['name']
-        myZoomModel = lField.get('zoomModel', '')
-        if (len(myZoomModel) > 0) and (myZoomModel != cBase.protoMeta['viewEntity']):
-            relModels[fName] = {
-                'zoomModel': myZoomModel, 'fkId': lField.get('fkId', ''), 'loaded': False}
+    PPATH = os.path.join(  settings.BASE_DIR, 'templates' , lApp ) 
+    filePath = verifyDirPath( PPATH )
+    if not filePath: 
+        # rise error NoPATH 
+        return False
+    
 
-    # Verifica si existen reemplazos por hacer ( cpFromField )
-    # 1.  Marca los zooms q estan referenciados
-    bCopyFromFld = False
-    for lField in cBase.protoMeta['fields']:
-        fName = lField['name']
-        if (lField.get('cpFromField') is None or lField.get('cpFromZoom') is None):
-            continue
-
-        bCopyFromFld = True
-        lField['isAbsorbed'] = True
-
-        # Marca el zoom
-        try:
-            relModel = relModels[lField.get('cpFromZoom')]
-            relModel['loaded'] = True
-        except:
-            pass
-
+    fileName = os.path.join( filePath, 'wiki' + lEntity + '.txt' )
+    fo = open( fileName , "wb")
+    fo.write( sAux.encode('utf-8'))
+    fo.close()
+ 
+ 

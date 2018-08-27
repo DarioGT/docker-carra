@@ -1,0 +1,14 @@
+{% load prototags %}{% block content %}
+======= Dependance : {{ dependance.str |capfirst }} =======
+
+^Property ^Value ^
+|Dependance |{{ dependance }}|
+
+====== References ======
+^Zooms ^Value^ 
+|produit |{{ dependance.produit.wkFullPageName }}|
+|fichier |{{ dependance.fichier.wkFullPageName }}|
+
+====== Details ======
+
+{% endblock %}

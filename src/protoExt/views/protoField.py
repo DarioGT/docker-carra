@@ -161,9 +161,10 @@ def isAdmField(fName):
 
     # Framework internals soft sm-Version that is a contextual field  
     return  (fName in [ \
-        'smOwningUser', 'smCreatedBy', 'smModifiedBy', \
+        'id','smOwningUser', 'smCreatedBy', 'smModifiedBy', \
         'smCreatedOn', 'smOwningTeam', 'smModifiedOn', \
         'smWflowStatus', 'smRegStatus', \
+        'smInfo', 'smVersion', \
         'smUUID', 'smNaturalCode' ])
 
 

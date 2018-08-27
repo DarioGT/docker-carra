@@ -62,13 +62,8 @@ def protoWiki(request):
         return JsonError(message)
 
 
-# 	Sheet et list selection
-    cRep = cAux()
-    cRep.sheetName = request.POST.get('sheetName', '' )
-    _getSheetConf( cBase, cRep  )
-
+    # Obtiene las filas del cBase.modelo
     try:
-        # Obtiene las filas del cBase.modelo
         Qs = getQSet(cBase)
 
     except Exception as e:
@@ -76,11 +71,11 @@ def protoWiki(request):
         message = getReadableError(e)
         return JsonError(message)
 
-    cRep.wikiPath = getParameter('wikiPath', '/var/www/dokuwiki/data/pages')
+    cBase.wikiPath = getParameter('wikiPath', '/var/www/dokuwiki/data/pages')
 
     for reg in Qs:
         try:
-            msgError = _doWikiFile(cBase, cRep , reg)
+            msgError = _doWikiFile(cBase, reg)
             if msgError: return msgError 
 
         except Exception as e:
@@ -90,56 +85,31 @@ def protoWiki(request):
 
     return JsonSuccess()
 
-    
+    cBase.viewEntity.lower().split('.') 
 
-def _doWikiFile(cBase, cRep,  reg ):
+def _doWikiFile(cBase,  reg ):
     """
     nameSpace     App.Model 
     pageExpr      prefix, Field
     """
  
-    myPath  = joinPath( cRep.wikiPath, reg.wkFilePath ) 
+    myPath  = joinPath( cBase.wikiPath, reg.wkFilePath ) 
+    regName = slugify2( cBase.viewCode.split('.')[1] )
 
     # Verify path              
     filePath = verifyDirPath( myPath )
     if not filePath: return JsonError('invalid path : %s' % myPath )
     filePath = joinPath( filePath , reg.wkPage ) + '.txt'
 
+    # Templatefile
+    lApp, lEntity =  cBase.viewEntity.lower().split('.') 
+    template = '{0}/wiki{1}.txt'.format( lApp, lEntity )
 
     # Carga el template   
-    t = loader.get_template( cRep.template )
-    wFile = t.render(Context({ 
-          cRep.regName : reg, 
-          }))
+    t = loader.get_template( template )
+    wFile = t.render(Context({regName : reg, }))
 
     WriteFile(filePath, wFile, 'w')
 
 
-
-def _getSheetConf(cBase, cRep):
-    """ 
-    Obtiene un sheetConfig dado su nombre
-    recibe  la definicion ( protoMeta ) y el nombre ( str )
-    retorna sheetConfig ( obj )
-    """
-
-    sheetConfs = cBase.protoMeta.get('sheetConfig', [])
-
-    # Los recorre todos pero se queda con el primero en caso de no encotrarl el nombre seleccionado
-    cRep.sheetConf = None
-    for item in sheetConfs:
-        if cRep.sheetConf == None:
-            cRep.sheetConf = item
-        if item.get('name', '') == cRep.sheetName :
-            cRep.sheetConf = item
-            break
-
-    if cRep.sheetConf == None:
-        return "sheet definition not found %s" % cRep.sheetName  
-
-    cRep.nSpaceExpr = cRep.sheetConf.get( 'nameSpace', '' )
-    cRep.pageExpr = cRep.sheetConf.get( 'pageExpr', '' )
-    cRep.template = cRep.sheetConf.get( 'template', '' )
-    cRep.regName = slugify2( cBase.viewCode.split('.')[1] )  
-    
 

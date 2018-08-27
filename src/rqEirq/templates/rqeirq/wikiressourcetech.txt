@@ -1,0 +1,14 @@
+{% load prototags %}{% block content %}
+======= Ressource Tech : {{ ressourcetech.str |capfirst }} =======
+
+^Property ^Value ^
+|Ressource Tech |{{ ressourcetech }}|
+
+====== References ======
+^Zooms ^Value^ 
+|technologie |{{ ressourcetech.technologie.wkFullPageName }}|
+|ressource |{{ ressourcetech.ressource.wkFullPageName }}|
+
+====== Details ======
+
+{% endblock %}

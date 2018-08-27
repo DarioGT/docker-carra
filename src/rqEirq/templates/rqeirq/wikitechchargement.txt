@@ -1,0 +1,14 @@
+{% load prototags %}{% block content %}
+======= Tech Chargement : {{ techchargement.str |capfirst }} =======
+
+^Property ^Value ^
+|Tech Chargement |{{ techchargement }}|
+
+====== References ======
+^Zooms ^Value^ 
+|technologie |{{ techchargement.technologie.wkFullPageName }}|
+|fichier |{{ techchargement.fichier.wkFullPageName }}|
+
+====== Details ======
+
+{% endblock %}

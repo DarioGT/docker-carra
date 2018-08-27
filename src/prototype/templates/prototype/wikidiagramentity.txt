@@ -1,0 +1,15 @@
+{% load prototags %}{% block content %}
+======= Diagram Entity : {{ diagramentity.str |capfirst }} =======
+
+^Property ^Value ^
+|info |{{ diagramentity.info }}|
+|Diagram Entity |{{ diagramentity }}|
+
+====== References ======
+^Zooms ^Value^ 
+|entity |{{ diagramentity.entity.wkFullPageName }}|
+|diagram |{{ diagramentity.diagram.wkFullPageName }}|
+
+====== Details ======
+
+{% endblock %}

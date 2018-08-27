@@ -1,0 +1,15 @@
+{% load prototags %}{% block content %}
+======= Property Equivalence : {{ propertyequivalence.str |capfirst }} =======
+
+^Property ^Value ^
+|description |{{ propertyequivalence.description }}|
+|Property Equivalence |{{ propertyequivalence }}|
+
+====== References ======
+^Zooms ^Value^ 
+|sourceProperty |{{ propertyequivalence.sourceProperty.wkFullPageName }}|
+|targetProperty |{{ propertyequivalence.targetProperty.wkFullPageName }}|
+
+====== Details ======
+
+{% endblock %}

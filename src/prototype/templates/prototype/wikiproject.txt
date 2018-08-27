@@ -1,15 +1,28 @@
-{% load pydev_debug %} 
-{% block content %}
-======= Project : {{ project.code|capfirst }} =======
-{{ project.description|default:".. description" }}
+{% load prototags %}{% block content %}
+======= Project : {{ project.str |capfirst }} =======
 
-====== Models ======
-^Models ^Description ^
-{% for model in project.model_set.all %}|{{ model.wkFullPageName }}|{{ model.description|default:".. description" }} |
+^Property ^Value ^
+|code |{{ project.code }}|
+|dbUser |{{ project.dbUser }}|
+|description |{{ project.description }}|
+|Project |{{ project }}|
+|dbPort |{{ project.dbPort }}|
+|dbPassword |{{ project.dbPassword }}|
+|dbName |{{ project.dbName }}|
+|dbEngine |{{ project.dbEngine }}|
+|dbHost |{{ project.dbHost }}|
+
+====== References ======
+^Zooms ^Value^ 
+
+====== Details ======
+
+^Model.project^
+{% for det in project.model_set.all %}|{{ det.wkFullPageName }}|
 {% endfor %}
 
-====== Diagrams ======
-... 
+^Diagram.project^
+{% for det in project.diagram_set.all %}|{{ det.wkFullPageName }}|
+{% endfor %}
+
 {% endblock %}
-
-

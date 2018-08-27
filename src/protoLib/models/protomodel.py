@@ -87,24 +87,6 @@ class ProtoModelBase(models.Model):
         super(ProtoModelBase, self).save(*args, **kwargs)
 
 
-class ProtoModelExt(ProtoModelBase):
-    """
-    Tabla modelo para la creacion de entidades de usuario  ( sm  security mark )
-    with json fields  ( UDPs ) and filtering allow 
-    """ 
-
-    smInfo = JSONField(default={})
-
-    objects = ProtoJSONManager(json_fields = ['smInfo'])
-    smObjects = models.Manager()
-
-    _protoJson = True
-
-    class Meta:
-        abstract = True
-
-
-
     @property
     def wkFilePath(self):
         #  app/model 
@@ -127,6 +109,26 @@ class ProtoModelExt(ProtoModelBase):
         sAux = joinPath( self.wkFilePath , self.wkPage ) 
         sAux = '[[:' + sAux.replace('/', ':').replace('\\', ':') + '|' + self.__str__() + ']]'
         return  sAux 
+
+
+
+class ProtoModelExt(ProtoModelBase):
+    """
+    Tabla modelo para la creacion de entidades de usuario  ( sm  security mark )
+    with json fields  ( UDPs ) and filtering allow 
+    """ 
+
+    smInfo = JSONField(default={})
+
+    objects = ProtoJSONManager(json_fields = ['smInfo'])
+    smObjects = models.Manager()
+
+    _protoJson = True
+
+    class Meta:
+        abstract = True
+
+
 
 
 def setSecurityInfo(dEntity, data, user_profile, ins):

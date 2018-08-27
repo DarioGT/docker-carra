@@ -1,0 +1,41 @@
+{% load prototags %}{% block content %}
+======= Fichier : {{ fichier.str |capfirst }} =======
+
+^Property ^Value ^
+|Fichier |{{ fichier }}|
+|chaineChargement |{{ fichier.chaineChargement }}|
+|chaineExtraction |{{ fichier.chaineExtraction }}|
+|chaineNettoyage |{{ fichier.chaineNettoyage }}|
+|code |{{ fichier.code }}|
+|codeUntTraitement |{{ fichier.codeUntTraitement }}|
+|description |{{ fichier.description }}|
+|dgu |{{ fichier.dgu }}|
+|emplacement |{{ fichier.emplacement }}|
+|frequence |{{ fichier.frequence }}|
+|label |{{ fichier.label }}|
+|notes |{{ fichier.notes }}|
+|reception |{{ fichier.reception }}|
+|scenario |{{ fichier.scenario }}|
+|typeExploitation |{{ fichier.typeExploitation }}|
+|typeF |{{ fichier.typeF }}|
+|urlDoc |{{ fichier.urlDoc }}|
+|urlMeta |{{ fichier.urlMeta }}|
+|urlModel |{{ fichier.urlModel }}|
+|vpa |{{ fichier.vpa }}|
+
+====== References ======
+^Zooms ^Value^ 
+|responsable |{{ fichier.responsable.wkFullPageName }}|
+|source |{{ fichier.source.wkFullPageName }}|
+
+====== Details ======
+
+^Techchargement.fichier^
+{% for det in fichier.techchargement_set.all %}|{{ det.wkFullPageName }}|
+{% endfor %}
+
+^Dependance.fichier^
+{% for det in fichier.dependance_set.all %}|{{ det.wkFullPageName }}|
+{% endfor %}
+
+{% endblock %}

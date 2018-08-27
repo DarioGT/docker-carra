@@ -1,14 +1,21 @@
 {% load prototags %}{% block content %}
-======= Model : {{ model.code|capfirst }} =======
-{{ model.description|default:".. description" }}
+======= Model : {{ model.str |capfirst }} =======
 
-====== Entities ======
-^Entity ^Description ^
-{% for entity in model.entity_set.all %}|{{ entity.wkFullPageName }}|{{ entity.description|default:".. description" }} |
+^Property ^Value ^
+|Model |{{ model }}|
+|modelPrefix |{{ model.modelPrefix }}|
+|code |{{ model.code }}|
+|description |{{ model.description }}|
+|category |{{ model.category }}|
+
+====== References ======
+^Zooms ^Value^ 
+|project |{{ model.project.wkFullPageName }}|
+
+====== Details ======
+
+^Entity.model^
+{% for det in model.entity_set.all %}|{{ det.wkFullPageName }}|
 {% endfor %}
-
-====== Hierarchy ======
-
-Projet : {{ model.project.wkFullPageName }}
 
 {% endblock %}

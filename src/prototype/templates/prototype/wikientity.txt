@@ -1,20 +1,28 @@
-{% load prototags %}
-{% block content %}
+{% load prototags %}{% block content %}
+======= Entity : {{ entity.str |capfirst }} =======
 
-======= entity : {{ entity.code|capfirst }} =======
-{{ entity.description|default:".. description" }}
+^Property ^Value ^
+|Entity |{{ entity }}|
+|description |{{ entity.description }}|
+|code |{{ entity.code }}|
+|dbName |{{ entity.dbName }}|
 
 ====== References ======
+^Zooms ^Value^ 
+|model |{{ entity.model.wkFullPageName }}|
 
-Projet : {{ entity.model.project.wkFullPageName }} 
+====== Details ======
 
-====== Properties ======
-^Property ^Description ^
-{% for entity in project.model_set.all %}|{{ entity.wkFullPageName }}|{{ entity.description|default:".. description" }} |
+^Properties^
+{% for det in entity.property_set.all %}|{{ det.wkFullPageName }}|
 {% endfor %}
 
+^Relationships^
+{% for det in entity.relationship_set.all %}|{{ det.wkFullPageName }}|
+{% endfor %}
 
+^Views^
+{% for det in entity.prototype_set.all %}|{{ det.wkFullPageName }}|
+{% endfor %}
 
 {% endblock %}
-
-
