@@ -116,6 +116,16 @@ class Cluster(Node):
         super(ProtoModelBase, self).save(*args, **kwargs)
 
 
+    protoExt = {
+        "gridConfig": {
+            "listDisplay": ["code", "label", "description"]
+        },
+        "actions": [
+            {"name": "doGraphViz", "selectionMode": "single"},
+        ],
+    }
+
+
 class NodeLink(Node):
     objects = ClusterManager()
 

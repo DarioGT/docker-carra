@@ -3,8 +3,12 @@
 import json
 from django.forms.models import model_to_dict
 from protoExt.utils.downloadFile import getCustomPath
-from rqGraph.models import NodeStyle, EdgeStyle, node, Canvas, CanvasDetail,\
-     nodeNodes, Edge
+from rqGraph.models import Node, ClusterHierarchy, Edge, NodeStyle, EdgeStyle
+from django.db.models.query_utils import Q
+
+
+# from protoExt.utils.utilsBase import getReadableError, traceError
+
 
 
 VersionSoftBPM = "0.0.1-2018-07-31"
@@ -22,8 +26,20 @@ idNodes = []
 edgesAll = []
 
 # Styles 
-nodeStyleCll= {}
-edgeStyleCll = {}
+nodeStyleSet= {}
+edgeStyleSet = {}
+
+
+def doGraphViz(modeladmin, request, queryset, parameters):
+    """ 
+    """
+    # if queryset.count() < 1:
+    #     return  {'success':False, 'message' : 'No record selected' }
+
+
+    CreateSoftBPM( queryset[1].id )
+
+
 
 
 def CreateSoftBPM( canvasId ):
@@ -44,8 +60,7 @@ def CreateSoftBPM( canvasId ):
     nodeStruct['nodes_set'] = getHierarchy( node.id )
     getEdges()
 
-    
-    ----
+   
     #Styles 
     getStyles()
    
@@ -66,7 +81,7 @@ def getHierarchy( nodeId  ):
     nodeStruct = {}
 
     #Cavas::node Setting     
-    node = Node.objects.get( id = NodeId )
+    node = Node.objects.get( id = nodeId )
     nodeStruct['code'] = node.element.code
     nodeStruct['node'] = node.element
 
@@ -91,15 +106,13 @@ def getEdges():
     
 
     #Add  Edges 
-    for edge in Edge.objects.filter(  Q( node0.id in idNodes ) | Q( node0.id in idNodes )) : 
+    for edge in Edge.objects.filter(  Q( 'node0_id' in idNodes ) | Q( 'node1_id' in idNodes )) : 
         edgesAll.append( edge ) 
     
 
 
 def getStyles():
 
-    nodeStyleSet = ()
-    edgeStyleSet = ()
   
     # Styles Id
     for node in nodesAll:
@@ -111,13 +124,13 @@ def getStyles():
   
     # Styles Get 
     for node in NodeStyle.objects.filter( pk__in=nodeStyleSet):
-        nodeStyleCll[ node['code']] = model_to_dict( node ) 
+        nodeStyleSet[ node['code']] = model_to_dict( node ) 
 
     for edge in EdgeStyle.objects.filter( pk__in=edgeStyleSet) :
-        edgeStyleCll[ node['code']]  = model_to_dict( edge ) 
+        edgeStyleSet[ node['code']]  = model_to_dict( edge ) 
       
 
-def getnodeStyle( node ):
+def genereNodeStyle( node ):
 
     GVDescription = GVDescription + "tooltip= """ + node['description'] + "\";" + nLn
 
@@ -126,7 +139,7 @@ def getnodeStyle( node ):
     else:
         GVDescription = GVDescription + "label= \";" + nLn
         GVDescription = GVDescription + "\"" + node['name'] + "\"" 
-        GVDescription = GVDescription + " [" + styleTypeItem.Value + "label= """ + node['Name'] + "\","
+        GVDescription = GVDescription + " [" + node.Value + "label= """ + node['Name'] + "\","
         GVDescription = GVDescription + "style= \", shape=""plaintext""];" + nLn + nLn
     
     GVDescription = GVDescription + "style = invis;" + nLn
@@ -152,10 +165,10 @@ def getNodeStyle( node ):
 
 def getEdgeStyle( edge ):
 
-    style = nodeEdgeSet(  edge['stile_id'] )
+    style = edgeStyleSet(  edge['stile_id'] )
     styleGV = style['GVStyle']
     
-    if node['label']:
+    if edge['label']:
         styleGV += ',' + 'label=\'' + edge['label'] + '\''
     
     return  '[' + styleGV + ']'
@@ -164,14 +177,14 @@ def getEdgeStyle( edge ):
 def generateGV( node ):
 
     GVDescription = GVDescription + "subgraph \"node_" + node['code'] + "\" {" + nLn
-    GVDescription = GVDescription + getnodeStyle( node )
+    GVDescription = GVDescription + genereNodeStyle( node )
 
     GVDescription = GVDescription + nLn
          
-    For Each nodeChild In node['node_set']
+    for nodeChild in node['node_set']:
         generateGV( nodeChild )
 
-    For Each node In node['nodes_set']
+    for node in node['nodes_set']:
         generateNode( node )
         
       
@@ -180,33 +193,32 @@ def generateNode( node ):
     GVDescription = GVDescription + nLn +  "\'" + node['code'] + '\''
     GVDescription = GVDescription + getNodeStyle( node )
 
-    TEST = nodeNode.Rank
+#     TEST = nodeNode.Rank
         
 
 def generateEdge( edge ):
 
-    GVDescription = GVDescription + nLn +  '\'' + node['node0'] + '\' -> ' +  '\'' + node['node1'] 
-    GVDescription = GVDescription + getNodeStyle( node )
+    GVDescription = GVDescription + nLn +  '\'' + edge['node0'] + '\' -> ' +  '\'' + edge['node1'] 
+    GVDescription = GVDescription + getNodeStyle( edge )
         
         
         
-        # Ranks
-        GVDescription = GVDescription + nLn
-        For Each Rank In node[''].Ranks
-            RankGroup = "{ rank=" + Rank + " "
-            For Each nodeNode In nodeNodes
-                If nodeNode.Rank = Rank:
-                    RankGroup = RankGroup + "\"" + nodeNode.ID + "\" "
-                
-                
+    # Ranks
+    GVDescription +=  nLn
+#     for  Rank in node[''].Ranks:
+#         RankGroup = "{ rank=" + Rank + " "
+#         for nodeNode In nodeNodes: 
+#             If nodeNode.Rank = Rank:
+#                 RankGroup = RankGroup + "\"" + nodeNode.ID + "\" "
+#             
 
-            
-            RankGroup = RankGroup + "}"
-            GVDescription = GVDescription + RankGroup + nLn + nLn
         
-        
-        
-        GVDescription = GVDescription + "}" + nLn
+#         RankGroup = RankGroup + "}"
+#         GVDescription = GVDescription + RankGroup + nLn + nLn
+    
+    
+    
+    GVDescription = GVDescription + "}" + nLn
     
 
 def produceOutput(): 
