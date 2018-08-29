@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-  
+
+from datetime import datetime  
 from protoExt.utils.utilsConvert import slugify2
 from protoExt.views.protoField import isAdmField
 import os
@@ -22,7 +23,8 @@ def doWikiFile( protoMeta ):
     lFields = []
     lZooms =  []
 
-    lApp, lEntity =  protoMeta['viewEntity'].lower().split('.')
+    lApp, lEntity =  protoMeta['viewEntity'].split('.')
+    lEntity = lEntity.lower()
 
 
     for lField in protoMeta['fields']:
@@ -37,7 +39,7 @@ def doWikiFile( protoMeta ):
 
     sAux  = "{% load prototags %}{% block content %}\n"
 
-    sAux += "======= {0} : $a {1}.str |capfirst $b =======\n\n".format( protoMeta['shortTitle'], lEntity )
+    sAux += "======= {0} : $a {1} |capfirst $b =======\n\n".format( protoMeta['shortTitle'], lEntity )
     sAux += "^Property ^Value ^\n"
 
     for lField in lFields:
@@ -73,8 +75,7 @@ def doWikiFile( protoMeta ):
         sAux += "{% endfor %}\n\n"
 
     sAux += "{% endblock %}"
-
-
+    sAux += "//AutoTemplate :{0}//".format( datetime.now() ) 
 
     sAux = sAux.replace( '$a', '{{').replace('$b', '}}')
 
@@ -82,14 +83,14 @@ def doWikiFile( protoMeta ):
     # File 
     from django.conf import settings
 
-    PPATH = os.path.join(  settings.BASE_DIR, 'templates' , lApp ) 
+    PPATH = os.path.join(  settings.BASE_DIR, lApp, 'templates', 'wiki' ) 
     filePath = verifyDirPath( PPATH )
     if not filePath: 
         # rise error NoPATH 
         return False
     
 
-    fileName = os.path.join( filePath, 'wiki' + lEntity + '.txt' )
+    fileName = os.path.join( filePath,  lApp + '.' + lEntity + '.dkwk' )
     fo = open( fileName , "wb")
     fo.write( sAux.encode('utf-8'))
     fo.close()

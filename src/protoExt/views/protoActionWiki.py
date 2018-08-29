@@ -102,14 +102,12 @@ def _doWikiFile(cBase,  reg ):
     filePath = joinPath( filePath , reg.wkPage ) + '.txt'
 
     # Templatefile
-    lApp, lEntity =  cBase.viewEntity.lower().split('.') 
-    template = '{0}/wiki{1}.txt'.format( lApp, lEntity )
+    lApp, lEntity =  cBase.viewEntity.split('.')
+    template = 'wiki/{0}.{1}.dkwk'.format( lApp,  lEntity.lower() )
 
     # Carga el template   
     t = loader.get_template( template )
     wFile = t.render(Context({regName : reg, }))
 
     WriteFile(filePath, wFile, 'w')
-
-
 
