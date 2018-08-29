@@ -63,9 +63,13 @@ class EdgeStyle(ProtoModelExt):
 
 
 
-
-
 class Node(ProtoModelExt):
+    """
+    Los nodos son jerarquicos, los padres necesariamente son clusters 
+    Un canvas puede contener  nodos / clusters, a diferentes niveles. 
+    Los graficos se pueden generar a partir de  clusters
+    """
+
     code  = models.CharField(blank=True, null=True, max_length=200)
     sytle = models.ForeignKey( NodeStyle, blank= True, null= True)
 
@@ -74,7 +78,14 @@ class Node(ProtoModelExt):
 
     visible = models.BooleanField(blank=True, default=True)
     url = models.CharField(blank=True, null=True, max_length=800)
-    rank = models.CharField(blank=True, null=True, max_length=200)
+
+#   Cluster ( AutoReference )
+    isCluster = models.BooleanField(default=False)
+    labelAsNode = models.BooleanField(default=False)
+    hideNodes = models.BooleanField(default=False)
+
+#   Optional params 
+    gvParams = models.CharField(blank=True, null=True, max_length=800)
 
 #   Trace Origin 
     idContenttype  = models.IntegerField(blank=True, null=True)
@@ -84,6 +95,32 @@ class Node(ProtoModelExt):
         return slugify2(self.code )
 
     unicode_sort = ('code','style')
+
+
+class ClusterManager( models.Manager ): 
+    def get_queryset(self):
+        bCluster = False
+        if self.model._meta.model_name == 'cluster': 
+            bCluster = True
+        return super(ClusterManager, self).get_queryset().filter( isCluster = bCluster )
+
+    
+class Cluster(Node):
+    objects = ClusterManager()
+
+    class Meta: 
+        proxy = True 
+
+    def save(self, *args, **kwargs):
+        self.isCluster = True
+        super(ProtoModelBase, self).save(*args, **kwargs)
+
+
+class NodeLink(Node):
+    objects = ClusterManager()
+
+    class Meta: 
+        proxy = True 
 
 
 
@@ -100,60 +137,26 @@ class Edge(ProtoModelExt):
     url = models.CharField(blank=True, null=True, max_length=800)
     
 
-
-class Canvas(ProtoModelBase):
-    #The canvas contains several clusters (n:n), each cluster is hierarchical
-    code  = models.CharField(blank=True, null=True, max_length=200)
-    description  = models.CharField(blank=True, null=True, max_length=200)
-
-    fillcolor = models.CharField(blank=True, null=True, max_length=200)	
-    gradientangle = models.CharField(blank=True, null=True, max_length=200)
-    color = models.CharField(blank=True, null=True, max_length=200)
-
-    graphType  = models.CharField(blank=True, null=True, max_length=200)
-    gvParams = models.CharField(blank=True, null=True, max_length=800)
-
     def __str__(self):
         return slugify2(self.code )
 
-    unicode_sort = ('code',)
 
+class ClusterHierarchy(ProtoModelBase):
+    # El canvas no es mas q una herarquia de elementos 
+    # Los elementos descriptivos estan eb ek nodo container
+    container = models.ForeignKey( 'Node', blank= True, null= True, related_name='container_set')
+    element = models.ForeignKey( 'Node', blank= True, null= True, related_name='element_set')
 
-class Cluster(ProtoModelExt):
-    # The clusters are hierarchical, the nodes are defined inside a cluster
-    code  = models.CharField(blank=True, null=True, max_length=200)
-    label  = models.CharField(blank=True, null=True, max_length=200)
-    description  = models.CharField(blank=True, null=True, max_length=200)
-    labelAsNode = models.BooleanField(default=False)
+    rankType = models.CharField(blank=True, null=True, max_length=20)
+    rank = models.CharField(blank=True, null=True, max_length=200)
+    sequence = models.IntegerField(blank=True, null=True) 
 
-    # Structure 
-    parentCluster = models.ForeignKey( 'self', blank= True, null= True, related_name='cluster_set')
-
-    # Hide internal nodes 
-    hideNodes = models.BooleanField(default=False)
-
-    fillcolor = models.CharField(blank=True, null=True, max_length=200)	
-    gradientangle = models.CharField(blank=True, null=True, max_length=200)
-    color = models.CharField(blank=True, null=True, max_length=200)
-
-    gvParams = models.CharField(blank=True, null=True, max_length=800)
 
     def __str__(self):
-        return slugify2(self.code )
+        return slugify2(self.container + ' > ' + self.element)
 
-    unicode_sort = ('code',)
+    unicode_sort = ('container', 'element')
 
-
-class ClusterNodes(ProtoModelExt):
-    #The nodes are defined independently, the same node can be in more than one cluster (n:n).
-    cluster = models.ForeignKey( Cluster, blank= True, null= True)
-    node = models.ForeignKey( Node, blank= True, null= True)
-
-
-class CanvasDetail(ProtoModelExt):
-    #The canvas contains several clusters (n:n), each cluster is hierarchical
-    canvas = models.ForeignKey( Canvas, blank= True, null= True)
-    cluster = models.ForeignKey( Cluster, blank= True, null= True)
 
 
 # ShapeType = ( 'box', 'polygon', 'ellipse', 'oval', 'circle', 'point', 'egg','triangle','plaintext','diamond','trapezium','parallelogram','house','pentagon','hexagon','septagon','octagon',doublecircle','doubleoctagon','tripleoctagon','invtriangle','invtrapezium','invhouse','Mdiamond','Msquare','Mcircle', 'rect','rectangle','square','cylinder','note','tab','folder','box3d','component','promoter','cds','terminator','utr','primersite','restrictionsite','fivepoverhang','threepoverhang','noverhang','assembly','signature','insulator','ribosite','rnastab','proteasesite','proteinstab','rpromoter','rarrow','larrow','lpromote' ) 

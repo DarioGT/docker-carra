@@ -3,21 +3,22 @@
 import json
 from django.forms.models import model_to_dict
 from protoExt.utils.downloadFile import getCustomPath
-from rqGraph.models import NodeStyle, EdgeStyle, Cluster, Canvas, CanvasDetail,\
-    ClusterNodes, Edge
- 
+from rqGraph.models import NodeStyle, EdgeStyle, node, Canvas, CanvasDetail,\
+     nodeNodes, Edge
 
 
 VersionSoftBPM = "0.0.1-2018-07-31"
 nLn = '\l' # New Line 
 
-graphSettings = {}
 GVDescription = ""
-clusterStucture = {}
+
 
 # Unique instance collections 
-clustersAll = {}
 nodesAll = {}
+
+
+# recorrer las conexiones de los nodos q estan en el diagrama 
+idNodes = []
 edgesAll = []
 
 # Styles 
@@ -27,29 +28,30 @@ edgeStyleCll = {}
 
 def CreateSoftBPM( canvasId ):
 
-    #Cavas::Cluster Setting     
-    graphSettings = Canvas.objects.get( id = canvasId )
+    # recorrer la jerarquia,  armar la estructuraa, incluir los nodos 
+    nodeStruct = {}
+
+    #Cavas::node Setting     
+    node = Node.objects.get( id = canvasId )
+    nodeStruct['canvas'] = node
 
     #Start the Graph
     GVDescription = "//graphviz file generated with SoftBPM " + VersionSoftBPM + nLn
-    GVDescription = GVDescription + "digraph \""  + graphSettings[ 'graphName' ] + "\"{" + nLn
+    GVDescription = "//RootNode : " + node['code']
 
+    GVDescription += "digraph \""  + node[ 'graphName' ] + "\"{" + nLn
 
-    #Cluster Hierarchy
-    for cluster in CanvasDetail.objects.filter( canvas_id = canvasId ): 
-        clusterDict = model_to_dict(cluster) 
-        clusterDict['clusters_set'] = getClusterHierarchy( clusterDict )
-        clusterDict['nodes_set'] = getClusterNodes( clusterDict['id'] )
+    nodeStruct['nodes_set'] = getHierarchy( node.id )
+    getEdges()
 
-        clusterStucture[ cluster['code'] ] = clusterDict
-        clustersAll[ cluster['code'] ] = clusterDict
     
+    ----
     #Styles 
     getStyles()
    
-    #Cluster loop 
-    for cluster in clusterStucture:
-        generateGV( cluster )
+    #node loop 
+    for node in nodeStruct:
+        generateGV( node )
 
     #Edges loop 
     for edge in edgesAll:
@@ -58,35 +60,40 @@ def CreateSoftBPM( canvasId ):
     produceOutput()
 
 
-def getClusterHierarchy( clusterDict ):
+def getHierarchy( nodeId  ):
     
-    clusterCll = [] 
+    # recorrer la jerarquia,  armar la estructuraa, incluir los nodos 
+    nodeStruct = {}
 
-    #Add Clusters Childs ( others cluster clusters are allowed ) 
-    for cluster in Cluster.objects.filter( id = clusterDict['id'] ): 
-        clusterChild =  model_to_dict(cluster) 
-        clusterCll.append( clusterChild   )
-        clusterDict['clusters_set'] = getClusterHierarchy( clusterChild )
-        clusterDict['nodes_set'] = getClusterNodes( clusterDict['id'] )
-
-    return clusterCll 
+    #Cavas::node Setting     
+    node = Node.objects.get( id = NodeId )
+    nodeStruct['code'] = node.element.code
+    nodeStruct['node'] = node.element
 
 
-def getClusterNodes( clusterId ):
-    
-    nodesCll = []
+    #node Hierarchy
+    for clusterElto in ClusterHierarchy.objects.filter( container_id = node.element.id ): 
 
-    #Add Clusters Nodes and Edges ( others cluster nodes are allowed ) 
-    for node in ClusterNodes.objects.filter( id = clusterId ): 
-        nodeDict =  model_to_dict(node) 
-        nodesCll.append( nodeDict )
-        nodesAll.append( nodeDict )
+        nodeid = clusterElto.elemento.id
+        nodesAll[ clusterElto.element.code ] =  model_to_dict( clusterElto.element )
 
+        if clusterElto.element.isCluster: 
+            nodeStruct['nodes_set'] = getHierarchy( nodeid )
         
-        for edge in Edge.objects.filter( node0_id = nodeDict['id'] ): 
-            edgesAll.append( model_to_dict(edge) )
+        else: 
+            idNodes.append = nodeid 
+
+
+    return nodeStruct
+
+
+def getEdges():
     
-    return nodesCll
+
+    #Add  Edges 
+    for edge in Edge.objects.filter(  Q( node0.id in idNodes ) | Q( node0.id in idNodes )) : 
+        edgesAll.append( edge ) 
+    
 
 
 def getStyles():
@@ -110,16 +117,16 @@ def getStyles():
         edgeStyleCll[ node['code']]  = model_to_dict( edge ) 
       
 
-def getClusterStyle( cluster ):
+def getnodeStyle( node ):
 
-    GVDescription = GVDescription + "tooltip= """ + cluster['description'] + "\";" + nLn
+    GVDescription = GVDescription + "tooltip= """ + node['description'] + "\";" + nLn
 
-    if not graphSettings.Item("clusterLabelAsNode"):
-        GVDescription = GVDescription + "label= """ + cluster['name'] + "\";" + nLn
+    if not node.Item("nodeLabelAsNode"):
+        GVDescription = GVDescription + "label= """ + node['name'] + "\";" + nLn
     else:
         GVDescription = GVDescription + "label= \";" + nLn
-        GVDescription = GVDescription + "\"" + cluster['name'] + "\"" 
-        GVDescription = GVDescription + " [" + styleTypeItem.Value + "label= """ + cluster['Name'] + "\","
+        GVDescription = GVDescription + "\"" + node['name'] + "\"" 
+        GVDescription = GVDescription + " [" + styleTypeItem.Value + "label= """ + node['Name'] + "\","
         GVDescription = GVDescription + "style= \", shape=""plaintext""];" + nLn + nLn
     
     GVDescription = GVDescription + "style = invis;" + nLn
@@ -154,17 +161,17 @@ def getEdgeStyle( edge ):
     return  '[' + styleGV + ']'
  
 
-def generateGV( cluster ):
+def generateGV( node ):
 
-    GVDescription = GVDescription + "subgraph \"cluster_" + cluster['code'] + "\" {" + nLn
-    GVDescription = GVDescription + getClusterStyle( cluster )
+    GVDescription = GVDescription + "subgraph \"node_" + node['code'] + "\" {" + nLn
+    GVDescription = GVDescription + getnodeStyle( node )
 
     GVDescription = GVDescription + nLn
          
-    For Each clusterChild In cluster['cluster_set']
-        generateGV( clusterChild )
+    For Each nodeChild In node['node_set']
+        generateGV( nodeChild )
 
-    For Each node In cluster['nodes_set']
+    For Each node In node['nodes_set']
         generateNode( node )
         
       
@@ -173,7 +180,7 @@ def generateNode( node ):
     GVDescription = GVDescription + nLn +  "\'" + node['code'] + '\''
     GVDescription = GVDescription + getNodeStyle( node )
 
-    TEST = clusterNode.Rank
+    TEST = nodeNode.Rank
         
 
 def generateEdge( edge ):
@@ -185,11 +192,11 @@ def generateEdge( edge ):
         
         # Ranks
         GVDescription = GVDescription + nLn
-        For Each Rank In cluster[''].Ranks
+        For Each Rank In node[''].Ranks
             RankGroup = "{ rank=" + Rank + " "
-            For Each clusterNode In clusterNodes
-                If clusterNode.Rank = Rank:
-                    RankGroup = RankGroup + "\"" + clusterNode.ID + "\" "
+            For Each nodeNode In nodeNodes
+                If nodeNode.Rank = Rank:
+                    RankGroup = RankGroup + "\"" + nodeNode.ID + "\" "
                 
                 
 
