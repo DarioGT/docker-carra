@@ -154,8 +154,8 @@ class Edge(ProtoModelExt):
 class ClusterHierarchy(ProtoModelBase):
     # El canvas no es mas q una herarquia de elementos 
     # Los elementos descriptivos estan eb ek nodo container
-    container = models.ForeignKey( 'Node', blank= True, null= True, related_name='container_set')
-    element = models.ForeignKey( 'Node', blank= True, null= True, related_name='element_set')
+    container = models.ForeignKey( 'Node', blank= False, null= False, related_name='container_set')
+    element = models.ForeignKey( 'Node', blank= False, null= False, related_name='element_set')
 
     rankType = models.CharField(blank=True, null=True, max_length=20)
     rank = models.CharField(blank=True, null=True, max_length=200)
@@ -163,9 +163,8 @@ class ClusterHierarchy(ProtoModelBase):
 
 
     def __str__(self):
-        return slugify2(self.container + ' > ' + self.element)
+        return slugify2(self.container.code + ' > ' + self.element.code)
 
-    unicode_sort = ('container', 'element')
 
 
 

@@ -10,7 +10,6 @@ from django.db.models.query_utils import Q
 # from protoExt.utils.utilsBase import getReadableError, traceError
 
 
-
 VersionSoftBPM = "0.0.1-2018-07-31"
 nLn = '\l' # New Line 
 
@@ -33,11 +32,11 @@ edgeStyleSet = {}
 def doGraphViz(modeladmin, request, queryset, parameters):
     """ 
     """
-    # if queryset.count() < 1:
-    #     return  {'success':False, 'message' : 'No record selected' }
+    if queryset.count() < 1:
+        return  {'success':False, 'message' : 'No record selected' }
 
 
-    CreateSoftBPM( queryset[1].id )
+    CreateSoftBPM( queryset[0].id )
 
 
 
@@ -53,9 +52,9 @@ def CreateSoftBPM( canvasId ):
 
     #Start the Graph
     GVDescription = "//graphviz file generated with SoftBPM " + VersionSoftBPM + nLn
-    GVDescription = "//RootNode : " + node['code']
+    GVDescription += "//RootNode : " + node.code
 
-    GVDescription += "digraph \""  + node[ 'graphName' ] + "\"{" + nLn
+    GVDescription += "digraph \""  + node.code + "\"{" + nLn
 
     nodeStruct['nodes_set'] = getHierarchy( node.id )
     getEdges()
@@ -65,14 +64,14 @@ def CreateSoftBPM( canvasId ):
     getStyles()
    
     #node loop 
-    for node in nodeStruct:
-        generateGV( node )
+#     for node in nodeStruct:
+#         generateGV( node )
+# 
+#     #Edges loop 
+#     for edge in edgesAll:
+#         generateEdge( edge )
 
-    #Edges loop 
-    for edge in edgesAll:
-        generateEdge( edge )
-
-    produceOutput()
+#     produceOutput()
 
 
 def getHierarchy( nodeId  ):
@@ -82,21 +81,23 @@ def getHierarchy( nodeId  ):
 
     #Cavas::node Setting     
     node = Node.objects.get( id = nodeId )
-    nodeStruct['code'] = node.element.code
-    nodeStruct['node'] = node.element
-
-
+    nodeStruct['code'] = node.code
+    nodeStruct['node'] = node
+    nodeStruct['elements'] = []
+    nodeStruct['nodes_set'] = {} 
+    
     #node Hierarchy
-    for clusterElto in ClusterHierarchy.objects.filter( container_id = node.element.id ): 
+    for clusterElto in ClusterHierarchy.objects.filter( container_id = node.id ): 
 
-        nodeid = clusterElto.elemento.id
-        nodesAll[ clusterElto.element.code ] =  model_to_dict( clusterElto.element )
+        nodeid = clusterElto.element.id
+        nodesAll[ clusterElto.element.code ] =  clusterElto.element 
 
         if clusterElto.element.isCluster: 
             nodeStruct['nodes_set'] = getHierarchy( nodeid )
         
         else: 
-            idNodes.append = nodeid 
+            nodeStruct['elements'].append( clusterElto.element ) 
+            idNodes.append( nodeid )  
 
 
     return nodeStruct
@@ -106,7 +107,7 @@ def getEdges():
     
 
     #Add  Edges 
-    for edge in Edge.objects.filter(  Q( 'node0_id' in idNodes ) | Q( 'node1_id' in idNodes )) : 
+    for edge in Edge.objects.filter(  Q( node0__pk__in= idNodes ) | Q( node1__pk__in= idNodes )) : 
         edgesAll.append( edge ) 
     
 
@@ -116,10 +117,10 @@ def getStyles():
   
     # Styles Id
     for node in nodesAll:
-        nodeStyleSet.add( node['stile_id'] ) 
+        nodeStyleSet.append( node.stile_id) 
       
     for edge in nodesAll:
-        edgeStyleSet.add( edge['stile_id'] ) 
+        edgeStyleSet.append( edge.stile_id ) 
   
   
     # Styles Get 
@@ -133,7 +134,6 @@ def getStyles():
 def genereNodeStyle( node ):
 
     GVDescription = GVDescription + "tooltip= """ + node['description'] + "\";" + nLn
-
     if not node.Item("nodeLabelAsNode"):
         GVDescription = GVDescription + "label= """ + node['name'] + "\";" + nLn
     else:
@@ -176,7 +176,7 @@ def getEdgeStyle( edge ):
 
 def generateGV( node ):
 
-    GVDescription = GVDescription + "subgraph \"node_" + node['code'] + "\" {" + nLn
+    GVDescription = GVDescription + "subgraph \"node_" + node.code + "\" {" + nLn
     GVDescription = GVDescription + genereNodeStyle( node )
 
     GVDescription = GVDescription + nLn
@@ -190,7 +190,7 @@ def generateGV( node ):
       
 def generateNode( node ): 
 
-    GVDescription = GVDescription + nLn +  "\'" + node['code'] + '\''
+    GVDescription = GVDescription + nLn +  "\'" + node.code + '\''
     GVDescription = GVDescription + getNodeStyle( node )
 
 #     TEST = nodeNode.Rank

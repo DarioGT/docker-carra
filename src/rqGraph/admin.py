@@ -2,13 +2,13 @@ from django.contrib import admin
 
 
 from .models import Cluster
-from .actions import doGraph
+from .actions import doGraphViz
 
 
 
 class AdmNode( admin.ModelAdmin ):
-    actions = [ doGeneraBasicNet  ]
+    actions = [ doGraphViz  ]
 
-admin.site.register( Node, AdmNode )
+admin.site.register( Cluster, AdmNode )
 
 
