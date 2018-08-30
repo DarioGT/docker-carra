@@ -9,20 +9,6 @@ class NodeStyle(ProtoModelExt):
     code  = models.CharField(blank=True, null=True, max_length=200)
     description = models.CharField(blank=True, null=True, max_length=200)
 
-    fontname = models.CharField(blank=True, null=True, max_length=200)	
-    fontsize = models.CharField(blank=True, null=True, max_length=200)
-    fontcolor = models.CharField(blank=True, null=True, max_length=200)
-    fixedsize = models.BooleanField(default=False)
-
-    width = models.IntegerField(blank=True, null=True)
-    height = models.IntegerField(blank=True, null=True)	
-    shape = models.CharField(blank=True, null=True, max_length=200)
-    style = models.CharField(blank=True, null=True, max_length=200)
-    fillcolor = models.CharField(blank=True, null=True, max_length=200)	
-    gradientangle = models.CharField(blank=True, null=True, max_length=200)
-    color = models.CharField(blank=True, null=True, max_length=200)
-    imagePath = models.CharField(blank=True, null=True, max_length=800)
-
     gvParams = models.CharField(blank=True, null=True, max_length=800)
 
     def __str__(self):
@@ -31,28 +17,9 @@ class NodeStyle(ProtoModelExt):
     unicode_sort = ('code',)
 
 
-
 class EdgeStyle(ProtoModelExt):
     code  = models.CharField(blank=True, null=True, max_length=200)
     description = models.CharField(blank=True, null=True, max_length=200)
-
-    dir	 = models.CharField(blank=True, null=True, max_length=200)
-    color = models.CharField(blank=True, null=True, max_length=200)
-
-    arrowhead = models.CharField(blank=True, null=True, max_length=200)	
-    arrowtail = models.CharField(blank=True, null=True, max_length=200)
-    arrowsize = models.IntegerField(blank=True, null=True)
-
-    xlabel = models.CharField(blank=True, null=True, max_length=200)
-    style = models.CharField(blank=True, null=True, max_length=200)
-    lhead = models.CharField(blank=True, null=True, max_length=200)
-    ltail = models.CharField(blank=True, null=True, max_length=200)
-
-    constraint = models.BooleanField(default=False)
-
-    fontname = models.CharField(blank=True, null=True, max_length=200)	
-    fontsize = models.CharField(blank=True, null=True, max_length=200)
-    fontcolor = models.CharField(blank=True, null=True, max_length=200)
 
     gvParams = models.CharField(blank=True, null=True, max_length=800)
 
@@ -71,7 +38,7 @@ class Node(ProtoModelExt):
     """
 
     code  = models.CharField(blank=True, null=True, max_length=200)
-    sytle = models.ForeignKey( NodeStyle, blank= True, null= True)
+    style = models.ForeignKey( NodeStyle, blank= True, null= True)
 
     label  = models.CharField(blank=True, null=True, max_length=200)
     description  = models.CharField(blank=True, null=True, max_length=200)

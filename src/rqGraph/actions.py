@@ -1,44 +1,42 @@
 # -*- coding: utf-8 -*-
 
 import json
-from django.forms.models import model_to_dict
 from protoExt.utils.downloadFile import getCustomPath
 from rqGraph.models import Node, ClusterHierarchy, Edge, NodeStyle, EdgeStyle
 from django.db.models.query_utils import Q
+from datetime import datetime
 
 
 # from protoExt.utils.utilsBase import getReadableError, traceError
 
 
-VersionSoftBPM = "0.0.1-2018-07-31"
-nLn = '\l' # New Line 
-
-GVDescription = ""
+VersionSoftBPM = '0.0.1'
+nLn = '\n' # New Line 
 
 
 # Unique instance collections 
 nodesAll = {}
 
 
-# recorrer las conexiones de los nodos q estan en el diagrama 
+# recorrer las conexiones de los nodos q eststylean en el diagrama 
 idNodes = []
 edgesAll = []
 
 # Styles 
 nodeStyleSet= {}
 edgeStyleSet = {}
-
+datetime
 
 def doGraphViz(modeladmin, request, queryset, parameters):
-    """ 
-    """
+    ''' 
+    '''
     if queryset.count() < 1:
         return  {'success':False, 'message' : 'No record selected' }
 
 
     CreateSoftBPM( queryset[0].id )
-
-
+    
+    pass
 
 
 def CreateSoftBPM( canvasId ):
@@ -51,180 +49,137 @@ def CreateSoftBPM( canvasId ):
     nodeStruct['canvas'] = node
 
     #Start the Graph
-    GVDescription = "//graphviz file generated with SoftBPM " + VersionSoftBPM + nLn
-    GVDescription += "//RootNode : " + node.code
+    GVsrc = '//SoftMachine Graph v(0) {1}\n'.format( VersionSoftBPM, datetime.now() )
+    GVsrc += 'digraph "{0}"'.format( node.code ) +  "{\n"
 
-    GVDescription += "digraph \""  + node.code + "\"{" + nLn
+    #Add  Hierarchy
+    nodeStruct['nodes_set'], sAux  = getHierarchy( node.id )
+    GVsrc += sAux
 
-    nodeStruct['nodes_set'] = getHierarchy( node.id )
-    getEdges()
 
-   
-    #Styles 
-    getStyles()
-   
-    #node loop 
-#     for node in nodeStruct:
-#         generateGV( node )
-# 
-#     #Edges loop 
-#     for edge in edgesAll:
-#         generateEdge( edge )
+    #Add  Edges
+    GVsrc +=  getEdges()
+    GVsrc += "}" 
 
-#     produceOutput()
+    pass
+
+
+
+def getEdges():
+
+    sAux = ''
+    #Add  Edges 
+    for edge in Edge.objects.filter(  Q( node0__pk__in= idNodes ) | Q( node1__pk__in= idNodes )) : 
+        sAux  += '"{0}" -> "{1}" [label="{2}"]\n'.format( edge.node0.code,  edge.node1.code, edge.label or '' )
+        edgesAll.append( edge ) 
+
+    return sAux 
 
 
 def getHierarchy( nodeId  ):
     
     # recorrer la jerarquia,  armar la estructuraa, incluir los nodos 
     nodeStruct = {}
+    sAux = ''
+    
 
     #Cavas::node Setting     
-    node = Node.objects.get( id = nodeId )
-    nodeStruct['code'] = node.code
-    nodeStruct['node'] = node
+    nodeRoot = Node.objects.get( id = nodeId )
+    nodeStruct['code'] = nodeRoot.code
+    nodeStruct['node'] = nodeRoot
     nodeStruct['elements'] = []
     nodeStruct['nodes_set'] = {} 
     
     #node Hierarchy
-    for clusterElto in ClusterHierarchy.objects.filter( container_id = node.id ): 
+    for clusterElto in ClusterHierarchy.objects.filter( container_id = nodeRoot.id ): 
 
+        nodeCh = clusterElto.element 
         nodeid = clusterElto.element.id
-        nodesAll[ clusterElto.element.code ] =  clusterElto.element 
+        nodesAll[ clusterElto.element.code ] = nodeCh
 
-        if clusterElto.element.isCluster: 
-            nodeStruct['nodes_set'] = getHierarchy( nodeid )
-        
+        if nodeCh.isCluster: 
+            sAux += 'subgraph "node_{0}"'.format( nodeCh.code ) + '{\n'
+            nodeStruct['nodes_set'], s2  = getHierarchy( nodeid )
+            sAux += s2
+
         else: 
-            nodeStruct['elements'].append( clusterElto.element ) 
+            nodeStruct['elements'].append( nodeCh ) 
             idNodes.append( nodeid )  
 
-
-    return nodeStruct
-
-
-def getEdges():
+            sAux +=  '{0} [{1}]\n'.format( nodeCh.code, getNodeStyle(nodeCh) ) 
     
+        if nodeCh.isCluster: 
+            sAux += '}\n' 
 
-    #Add  Edges 
-    for edge in Edge.objects.filter(  Q( node0__pk__in= idNodes ) | Q( node1__pk__in= idNodes )) : 
-        edgesAll.append( edge ) 
-    
+    return nodeStruct, sAux 
 
-
-def getStyles():
-
-  
-    # Styles Id
-    for node in nodesAll:
-        nodeStyleSet.append( node.stile_id) 
-      
-    for edge in nodesAll:
-        edgeStyleSet.append( edge.stile_id ) 
-  
-  
-    # Styles Get 
-    for node in NodeStyle.objects.filter( pk__in=nodeStyleSet):
-        nodeStyleSet[ node['code']] = model_to_dict( node ) 
-
-    for edge in EdgeStyle.objects.filter( pk__in=edgeStyleSet) :
-        edgeStyleSet[ node['code']]  = model_to_dict( edge ) 
-      
-
-def genereNodeStyle( node ):
-
-    GVDescription = GVDescription + "tooltip= """ + node['description'] + "\";" + nLn
-    if not node.Item("nodeLabelAsNode"):
-        GVDescription = GVDescription + "label= """ + node['name'] + "\";" + nLn
-    else:
-        GVDescription = GVDescription + "label= \";" + nLn
-        GVDescription = GVDescription + "\"" + node['name'] + "\"" 
-        GVDescription = GVDescription + " [" + node.Value + "label= """ + node['Name'] + "\","
-        GVDescription = GVDescription + "style= \", shape=""plaintext""];" + nLn + nLn
-    
-    GVDescription = GVDescription + "style = invis;" + nLn
 
 
 def getNodeStyle( node ):
 
-    style = nodeStyleSet(  node['stile_id'] )
-    styleGV = style['GVStyle']
-    
-    nodeLabel = node['code']
-    if node['label']:
-        nodeLabel = node['label']
-    
-    styleGV += ',' + 'label=\'' + node['label'] + '\''
+    sAux = 'label="{0}"'.format( node.label or node.code )  
 
-    if node['description']:
-        styleGV += ',' + 'tooltip=\'' + node['description'] + '\''
+    if node.description:
+        sAux += ',tooltip="{0}"'.format( node.description  ) 
+
+    sAux = addGvParams( sAux, node.gvParams or '')  
+    sAux = addGvParams( sAux, node.style.gvParams or '' )  
+
+    return  sAux
 
 
-    return  '[' + styleGV + ']'
+def addGvParams( sAux, gvParams ):
+    # Params hierarchy
 
+    if len( gvParams.strip() ) ==  0:
+        return sAux
+     
+    cParams = sAux.strip().split( ',' )
+    cNewParams = gvParams.strip().split( ',' )
 
-def getEdgeStyle( edge ):
-
-    style = edgeStyleSet(  edge['stile_id'] )
-    styleGV = style['GVStyle']
-    
-    if edge['label']:
-        styleGV += ',' + 'label=\'' + edge['label'] + '\''
-    
-    return  '[' + styleGV + ']'
- 
-
-def generateGV( node ):
-
-    GVDescription = GVDescription + "subgraph \"node_" + node.code + "\" {" + nLn
-    GVDescription = GVDescription + genereNodeStyle( node )
-
-    GVDescription = GVDescription + nLn
-         
-    for nodeChild in node['node_set']:
-        generateGV( nodeChild )
-
-    for node in node['nodes_set']:
-        generateNode( node )
-        
-      
-def generateNode( node ): 
-
-    GVDescription = GVDescription + nLn +  "\'" + node.code + '\''
-    GVDescription = GVDescription + getNodeStyle( node )
-
-#     TEST = nodeNode.Rank
-        
-
-def generateEdge( edge ):
-
-    GVDescription = GVDescription + nLn +  '\'' + edge['node0'] + '\' -> ' +  '\'' + edge['node1'] 
-    GVDescription = GVDescription + getNodeStyle( edge )
-        
-        
-        
-    # Ranks
-    GVDescription +=  nLn
-#     for  Rank in node[''].Ranks:
-#         RankGroup = "{ rank=" + Rank + " "
-#         for nodeNode In nodeNodes: 
-#             If nodeNode.Rank = Rank:
-#                 RankGroup = RankGroup + "\"" + nodeNode.ID + "\" "
-#             
+    cUnique = []
+    for pAux in cParams: 
+        cUnique.append( pAux.split('=')[0].strip())
 
         
-#         RankGroup = RankGroup + "}"
-#         GVDescription = GVDescription + RankGroup + nLn + nLn
-    
-    
-    
-    GVDescription = GVDescription + "}" + nLn
-    
+    for pAux in cNewParams: 
+        pNew = pAux.split('=')[0].strip()
+        if pNew in cUnique: continue 
+        cUnique.append( pNew )
+        sAux += ',' + pAux
 
-def produceOutput(): 
+    return sAux 
+
+
+
+def labelAsNode( node ):
+
+    sAux = ''
+    # if not node.Item('nodeLabelAsNode')
+    #     sAux += 'label= ''' + node['name'] + '\';' + nL
+    # else
+    #     sAux += 'label= \';' + nL
+    #     sAux += '\'' + node['name'] + '\''
+    #     sAux += ' [' + node.Value + 'label= ''' + node['Name'] + '\',
+    #     sAux += 'style= \', shape=''plaintext''];' + nLn + nL
+   
+    # sAux += 'style = invis;' + nL
+
+    # return sAux
+    pass
+
+
+def defineRank():
+        
+    # for  Rank in node[''].Ranks:
+    #     RankGroup = "{ rank=' + Rank + ' '
+    #     for nodeNode In nodeNodes: 
+    #         If nodeNode.Rank = Rank:
+    #             RankGroup = RankGroup + '\'' + nodeNode.ID + '\' '
+        
+    #     RankGroup = RankGroup + '}"
+    #     GVsrc += RankGroup + nLn + nLn
+    
+    # GVsrc += '}" + nLn
+    
     pass 
-
-
-
-
-
