@@ -161,6 +161,7 @@ def _protoEdit(request, myAction):
                 data['_ptId'] = _ptId
 
             except Exception as e:
+                traceError()
                 data['_ptStatus'] = data['_ptStatus'] + getReadableError(e)
                 data['_ptId'] = _ptId
 
@@ -169,6 +170,7 @@ def _protoEdit(request, myAction):
                 rec.delete()
 
             except Exception as e:
+                traceError()
                 data['_ptStatus'] = data['_ptStatus'] + getReadableError(e)
 
         pList.append(data)
