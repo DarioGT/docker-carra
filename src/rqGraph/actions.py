@@ -11,12 +11,9 @@ from datetime import datetime
 
 
 VersionSoftBPM = '0.0.1'
-nLn = '\n' # New Line 
-
 
 # Unique instance collections 
 nodesAll = {}
-
 
 # recorrer las conexiones de los nodos q eststylean en el diagrama 
 idNodes = []
@@ -51,6 +48,7 @@ def CreateSoftBPM( canvasId ):
     #Start the Graph
     GVsrc = '//SoftMachine Graph v(0) {1}\n'.format( VersionSoftBPM, datetime.now() )
     GVsrc += 'digraph "{0}"'.format( node.code ) +  "{\n"
+    GVsrc += getNodeStyle(node) + '\n' 
 
     #Add  Hierarchy
     nodeStruct['nodes_set'], sAux  = getHierarchy( node.id )
@@ -99,6 +97,8 @@ def getHierarchy( nodeId  ):
 
         if nodeCh.isCluster: 
             sAux += 'subgraph "node_{0}"'.format( nodeCh.code ) + '{\n'
+            sAux += getNodeStyle(nodeCh) + '\n' 
+
             nodeStruct['nodes_set'], s2  = getHierarchy( nodeid )
             sAux += s2
 
@@ -122,8 +122,9 @@ def getNodeStyle( node ):
     if node.description:
         sAux += ',tooltip="{0}"'.format( node.description  ) 
 
-    sAux = addGvParams( sAux, node.gvParams or '')  
-    sAux = addGvParams( sAux, node.style.gvParams or '' )  
+    sAux = addGvParams( sAux, node.gvParams or '')
+    if node.style:  
+        sAux = addGvParams( sAux, node.style.gvParams or '' )  
 
     return  sAux
 
